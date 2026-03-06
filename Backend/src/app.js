@@ -1,0 +1,31 @@
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
+const app = express();
+
+//Cross origin resource sharing: Giving backend access to the frontend
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
+
+//Limiting the json file size of request body
+app.use(express.json({ limit: "16kb" }));
+
+//Encoding the api url
+app.use(express.urlencoded({ extended: false, limit: "16kb" }));
+
+//Creating a memory space to save the sended by the client through request
+app.use(express.static("public"));
+
+//For accessing the cookies of client browser
+app.use(cookieParser());
+
+app.get("/", (req, res) => {
+  res.send("Server Started");
+});
+
+export default app;
