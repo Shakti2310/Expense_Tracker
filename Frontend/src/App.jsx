@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import UserAuthPage from "./components/UserAuthPage";
 
 function App() {
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
   return (
     <div className="bg-[url(/src/assets/background.jpeg)] bg-cover min-h-dvh font-poppins flex justify-center items-center text-white">
       {isLogged ? (
