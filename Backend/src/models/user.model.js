@@ -40,7 +40,7 @@ const userSchema = new Schema(
 // Middleware or Hook which will run the function before saving the object into DB
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    this.password = bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
     next();
   }
 });
