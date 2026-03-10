@@ -1,44 +1,53 @@
-import logo from "../assets/logo.png";
-import logout from "../assets/logout.png";
 import { NavLink } from "react-router";
 
 function Navbar() {
   return (
     <>
-      <div className="bg-white/10 shadow-black/5 shadow-lg w-full h-[12%] fixed top-0 flex justify-around items-center">
+      <div className="w-full h-[12%] fixed top-0 flex justify-around items-center">
         <div className="flex gap-1">
-          <img className="size-12" src={logo} />
-          <div>
-            <h1 className="font-semibold text-2xl text-white">Expanse</h1>
-            <h2 className="text-xs">Tracker</h2>
-          </div>
+          <h1 className="text-3xl font-extralight">
+            Xse<span className="text-green-400 font-bold">Track</span>
+          </h1>
         </div>
-        <div className="flex text-white/40 font-semibold gap-25">
+        <div className="flex font-extralight text-white/40 gap-15">
           <MenuItem item={"Home"} />
           <MenuItem item={"Expenses"} />
-          <MenuItem item={"About"} />
+          <MenuItem item={"Github"} />
+          <MenuItem item={"About Us"} />
           <MenuItem item={"Contact"} />
         </div>
-        <button
-          className="flex text-sm hover:bg-white/15 active:bg-white/30 cursor-pointer font-semibold items-center gap-1 border-3 border-white rounded-3xl pr-4 pl-4 pt-1 pb-1"
-          type="button"
-        >
-          <img className="size-3" src={logout} />
-          logout
-        </button>
+        <div className="space-x-5 text-sm font-light">
+          <button
+            className="cursor-pointer hover:text-shadow-2xs hover:text-shadow-white"
+            type="button"
+          >
+            Log In
+          </button>
+          <button
+            className="p-2 pr-6 pl-6 cursor-pointer font-medium hover:bg-green-600 bg-green-500 rounded-3xl"
+            type="button"
+          >
+            Sign Up
+          </button>
+        </div>
       </div>
     </>
   );
 }
 
 function MenuItem({ item }) {
-  const path = item === "Home" ? "/" : item;
+  let path = item;
+  if (item === "Home") path = "/";
+  else if (item === "Github")
+    path = "https://github.com/Shakti2310/Expense_Tracker";
+
   return (
     <>
       <NavLink
         to={path}
+        target={item === "Github" ? "_blank" : ""}
         className={({ isActive }) =>
-          `hover:text-white/70 ${
+          ` hover:text-shadow-xs hover:text-shadow-white ${
             isActive ? "text-white transition-all ease-in-out" : ""
           }`
         }

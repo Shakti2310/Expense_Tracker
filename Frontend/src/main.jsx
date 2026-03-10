@@ -22,7 +22,7 @@ const router = createBrowserRouter([
         Component: Expanses,
       },
       {
-        path: "about",
+        path: "about us",
         Component: About,
       },
       {
