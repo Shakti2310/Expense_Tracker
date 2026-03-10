@@ -1,6 +1,6 @@
 import "dotenv/config";
-import connectDB from "./config/mongoDB.config.js";
-import "./config/cloudinary.config.js";
+import connectDB from "./configs/mongoDB.config.js";
+import "./configs/cloudinary.config.js";
 import app from "./app.js";
 
 connectDB()
