@@ -30,4 +30,6 @@ import userRouter from "./routes/user.routes.js";
 //routes declaration
 app.use("/api/users", userRouter);
 
+app.get("/", (_, res) => res.send("server running"));
+
 export default app;

@@ -6,7 +6,7 @@ const expenseSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    categoryId: { 
+    categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
     },
@@ -30,4 +30,6 @@ const expenseSchema = new Schema(
   { timestamps: true },
 );
 
-export const Expense = mongoose.model("Expense", expenseSchema);
+const Expense = mongoose.model("Expense", expenseSchema);
+
+export default Expense;

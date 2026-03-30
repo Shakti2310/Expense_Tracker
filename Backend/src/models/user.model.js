@@ -12,6 +12,9 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
+    role: {
+      type: String,
+    },
     email: {
       type: String,
       required: true,
@@ -39,7 +42,7 @@ const userSchema = new Schema(
 
 // Middleware or Hook which will run the function before saving the object into DB
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return ;
+  if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 10);
 });
@@ -49,11 +52,13 @@ userSchema.methods.checkPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
+// Custom method to generate Access Token
 userSchema.methods.generateAccessToken = function () {
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       username: this.username,
+      role: this.role,
       fullname: this.fullname,
       email: this.email,
     },
@@ -62,17 +67,18 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 
+// Custom method to generate Refresh Token
 userSchema.methods.generateRefreshToken = function () {
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
-      username: this.username,
-      fullname: this.fullname,
-      email: this.email,
+      role: this.role,
     },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRY },
   );
 };
 
-export const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;
