@@ -45,6 +45,7 @@ const userSchema = new Schema(
 // Middleware or Hook which will run the function before saving the object into DB
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
+  if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 10);
 });
@@ -55,11 +56,14 @@ userSchema.methods.checkPassword = async function (password) {
 };
 
 // Custom method to generate Access Token
+// Custom method to generate Access Token
 userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
   return jwt.sign(
     {
       _id: this._id,
       username: this.username,
+      role: this.role,
       role: this.role,
       fullname: this.fullname,
       email: this.email,
@@ -70,10 +74,13 @@ userSchema.methods.generateAccessToken = function () {
 };
 
 // Custom method to generate Refresh Token
+// Custom method to generate Refresh Token
 userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
   return jwt.sign(
     {
       _id: this._id,
+      role: this.role,
       role: this.role,
     },
     process.env.REFRESH_TOKEN_SECRET,
@@ -81,6 +88,9 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
+const User = mongoose.model("User", userSchema);
+
+export default User;
 const User = mongoose.model("User", userSchema);
 
 export default User;
