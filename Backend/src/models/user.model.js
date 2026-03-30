@@ -56,9 +56,7 @@ userSchema.methods.checkPassword = async function (password) {
 };
 
 // Custom method to generate Access Token
-// Custom method to generate Access Token
 userSchema.methods.generateAccessToken = function () {
-  return jwt.sign(
   return jwt.sign(
     {
       _id: this._id,
@@ -74,9 +72,7 @@ userSchema.methods.generateAccessToken = function () {
 };
 
 // Custom method to generate Refresh Token
-// Custom method to generate Refresh Token
 userSchema.methods.generateRefreshToken = function () {
-  return jwt.sign(
   return jwt.sign(
     {
       _id: this._id,
@@ -88,9 +84,6 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
-const User = mongoose.model("User", userSchema);
-
-export default User;
 const User = mongoose.model("User", userSchema);
 
 export default User;
