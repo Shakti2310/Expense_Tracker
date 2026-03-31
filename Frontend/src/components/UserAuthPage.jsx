@@ -7,49 +7,22 @@ function UserAuthPage() {
   const [isSignIn, setIsSignIn] = useState(true);
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <div className="w-[60%] h-[80%] rounded-lg overflow-hidden relative ">
-        <SignIn isSignIn={isSignIn} />
-        <SignUp isSignIn={isSignIn} />
-        <div
-          className={`absolute transition-transform ease-in-out duration-700 flex flex-col justify-center gap-10 items-center left-1/2 w-1/2 h-full bg-violet-600 ${isSignIn ? "translate-x-0 opacity-100 z-20" : "-translate-x-full opacity-0 z-10"}`}
-        >
-          <div className={`w-full space-y-2 text-center`}>
-            <h1 className="text-4xl font-bold">Create account</h1>
-            <p>Provide your personal details to use all features</p>
-            <button
-              className="outline-2 mt-6 pt-2.5 pb-2.5 pr-12 pl-12 rounded-4xl text-sm cursor-pointer font-semibold"
-              type="button"
-              onClick={() => setIsSignIn(false)}
-            >
-              SIGN UP
-            </button>
-          </div>
-        </div>
-        <div
-          className={`absolute transition-transform ease-in-out duration-700 flex flex-col justify-center gap-10 items-center left-1/2 w-1/2 h-full bg-violet-600 ${isSignIn ? "translate-x-0 z-10 opacity-0" : "-translate-x-full opacity-100 z-20"}`}
-        >
-          <div className={`w-full space-y-2 text-center  `}>
-            <h1 className="text-4xl font-bold">Welcome back!</h1>
-            <p>If you already have an account just</p>
-            <button
-              className="outline-2 mt-6 pt-2.5 pb-2.5 pr-12 pl-12 rounded-4xl text-sm cursor-pointer font-semibold"
-              type="button"
-              onClick={() => setIsSignIn(true)}
-            >
-              SIGN IN
-            </button>
-          </div>
-        </div>
+    <div className={`h-screen w-screen flex justify-center items-center`}>
+      <div className="w-[40%] h-[80%] rounded-2xl overflow-hidden">
+        {isSignIn ? (
+          <SignIn setIsSignIn={setIsSignIn} />
+        ) : (
+          <SignUp setIsSignIn={setIsSignIn} />
+        )}
       </div>
     </div>
   );
 }
 
-function SignIn({ isSignIn }) {
+function SignIn({ setIsSignIn }) {
   return (
     <div
-      className={`absolute transition-transform ease-in-out duration-700 left-0 h-full flex flex-col justify-center w-1/2 space-y-10 p-10 bg-black/20 text-sm ${isSignIn ? "translate-x-0 opacity-100 z-20" : "translate-x-full z-10 opacity-0"}`}
+      className={`transition-all ease-in-out duration-700 h-full flex flex-col justify-center space-y-10 p-10 bg-black/20 text-sm`}
     >
       <div className="space-y-2">
         <h1 className="text-4xl font-bold">Sign in!</h1>
@@ -98,29 +71,49 @@ function SignIn({ isSignIn }) {
           <div class="grow border-t border-myGrayFont"></div>
         </div>
 
-        <div className="flex justify-center gap-16">
-          <img
-            className="w-8 object-contain rounded-full cursor-pointer"
-            src={googleIcon}
-          />
-          <img
-            className="w-9 object-contain rounded-full cursor-pointer"
-            src={githubIcon}
-          />
-          <img
-            className="w-9 object-contain rounded-full cursor-pointer"
-            src={facebookIcon}
-          />
+        <div className="flex justify-center gap-5">
+          <div className="ext-center space-x-2 rounded-lg hover:bg-myGraySoft/50 cursor-pointer bg-myGraySoft pr-8 pl-8 pt-2 pb-2">
+            <img
+              className="w-5 inline-block object-contain rounded-full cursor-pointer"
+              src={googleIcon}
+            />
+            <span>Google</span>
+          </div>
+          <div className="ext-center space-x-2 rounded-lg hover:bg-myGraySoft/50 cursor-pointer bg-myGraySoft pr-8 pl-8 pt-2 pb-2">
+            <img
+              className="w-5 inline-block object-contain rounded-full cursor-pointer"
+              src={githubIcon}
+            />
+            <span>GitHub</span>
+          </div>
+          <div className="ext-center space-x-2 rounded-lg hover:bg-myGraySoft/50 cursor-pointer bg-myGraySoft pr-8 pl-8 pt-2 pb-2">
+            <img
+              className="w-5 inline-block object-contain rounded-full cursor-pointer"
+              src={facebookIcon}
+            />
+            <span>Facebook</span>
+          </div>
+        </div>
+
+        <div className="text-center">
+          Don't have an account?{" "}
+          <button
+            className="text-fuchsia-500 cursor-pointer hover:text-fuchsia-700"
+            type="text"
+            onClick={() => setIsSignIn(false)}
+          >
+            Sign Up
+          </button>
         </div>
       </form>
     </div>
   );
 }
 
-function SignUp({ isSignIn }) {
+function SignUp({ setIsSignIn }) {
   return (
     <div
-      className={`absolute transition-transform ease-in-out duration-700 left-0 h-full flex flex-col justify-center w-1/2 space-y-10 p-10 bg-black/20 text-sm ${isSignIn ? "translate-x-0 z-10 opacity-0" : "translate-x-full z-20 opacity-100"}`}
+      className={`transition-all ease-in-out duration-700 h-full flex flex-col justify-center space-y-10 p-10 bg-black/20 text-sm`}
     >
       <div className="space-y-2">
         <h1 className="text-4xl font-bold">Sign up!</h1>
