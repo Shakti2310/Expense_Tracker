@@ -1,4 +1,7 @@
 import { useState } from "react";
+import googleIcon from "../assets/google.png";
+import facebookIcon from "../assets/facebook.png";
+import githubIcon from "../assets/github.png";
 
 function UserAuthPage() {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -53,7 +56,7 @@ function SignIn({ isSignIn }) {
         <p className="text-sm">Enter to go unlimited access to your data</p>
       </div>
 
-      <form className="flex flex-col gap-3">
+      <form className="flex flex-col gap-5">
         <Input name={"Username"} type={"text"} msg={"Enter your username"} />
         <Input
           name={"Password"}
@@ -88,6 +91,27 @@ function SignIn({ isSignIn }) {
         >
           Log in
         </button>
+
+        <div class="flex items-center">
+          <div class="grow border-t border-myGrayFont"></div>
+          <span class="mx-4 text-myGrayFont">OR</span>
+          <div class="grow border-t border-myGrayFont"></div>
+        </div>
+
+        <div className="flex justify-center gap-16">
+          <img
+            className="w-8 object-contain rounded-full cursor-pointer"
+            src={googleIcon}
+          />
+          <img
+            className="w-9 object-contain rounded-full cursor-pointer"
+            src={githubIcon}
+          />
+          <img
+            className="w-9 object-contain rounded-full cursor-pointer"
+            src={facebookIcon}
+          />
+        </div>
       </form>
     </div>
   );
@@ -138,7 +162,7 @@ function SignUp({ isSignIn }) {
           className="bg-fuchsia-500 hover:bg-fuchsia-600 text-sm pt-2 pb-2 cursor-pointer rounded-lg"
           type="submit"
         >
-          Log in
+          Sign up
         </button>
       </form>
     </div>
