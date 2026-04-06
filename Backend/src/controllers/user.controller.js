@@ -40,7 +40,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (existedUser) throw new ApiError(409, "User already existed");
 
   // Getting the user picture from client
-  const dpLocalPath = req.files?.defaultPicture[0]?.path;
+  const dpLocalPath = req.files?.defaultPicture?.[0]?.path;
 
   // Checking for picture is provided or not
   if (!dpLocalPath) throw new ApiError(400, "Picture not found");
