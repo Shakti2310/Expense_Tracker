@@ -2,9 +2,10 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import User from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.utils.js";
 import jwt from "jsonwebtoken";
 import { cookieOptions } from "../constants.js";
+import fs from "fs";
+import { v2 as cloudinary } from "cloudinary";
 
 const generateJWT = async (userId) => {
   try {
@@ -29,45 +30,54 @@ const registerUser = asyncHandler(async (req, res) => {
   // Getting user details from client
   const { username, fullname, email, password } = req.body;
 
-  // Checking any data is missing or not
-  if ([username, fullname, email, password].some((item) => item === ""))
-    throw new ApiError(400, "Details missing");
-
-  // Finding user if already existed
-  const existedUser = await User.findOne({ $or: [{ username }, { email }] });
-
-  // Throwing error if user is existed already
-  if (existedUser) throw new ApiError(409, "User already existed");
-
   // Getting the user picture from client
   const dpLocalPath = req.files?.defaultPicture?.[0]?.path;
 
-  // Checking for picture is provided or not
-  if (!dpLocalPath) throw new ApiError(400, "Picture not found");
+  try {
+    // Checking any data is missing or not
+    if ([username, fullname, email, password].some((item) => item === ""))
+      throw new ApiError(400, "Details missing");
 
-  // Uploading dp to Cloudinary
-  const defaultPicture = await uploadOnCloudinary(dpLocalPath);
+    // Finding user if already existed
+    const existedUser = await User.findOne({ $or: [{ username }, { email }] });
 
-  // Checking does it uploaded or not
-  if (!defaultPicture) throw new ApiError(500, "Cloudinary upload error");
+    // Throwing error if user is existed already
+    if (existedUser) throw new ApiError(409, "User already existed");
 
-  const user = await User.create({
-    username: username.trim().toLowerCase(),
-    role: "user",
-    fullname,
-    email,
-    password,
-    defaultPicture: defaultPicture.url,
-  });
+    // Checking for picture is provided or not
+    if (!dpLocalPath) throw new ApiError(400, "Picture not found");
 
-  const createdUser = await User.findById(user._id, "-password -refreshToken");
+    // Uploading dp to Cloudinary
+    const defaultPicture = await cloudinary.uploader.upload(dpLocalPath, {
+      resource_type: "auto",
+    });
 
-  if (!createdUser) throw new ApiError(500, "User not registered");
+    // Checking does it uploaded or not
+    if (!defaultPicture) throw new ApiError(500, "Cloudinary upload error");
 
-  // Sending the response and status code
-  return res
-    .status(201)
-    .json(new ApiResponse(200, "User registered successfully", createdUser));
+    const user = await User.create({
+      username: username.trim().toLowerCase(),
+      role: "user",
+      fullname,
+      email,
+      password,
+      defaultPicture: defaultPicture.url,
+    });
+
+    const createdUser = await User.findById(
+      user._id,
+      "-password -refreshToken",
+    );
+
+    if (!createdUser) throw new ApiError(500, "User not registered");
+
+    // Sending the response and status code
+    return res
+      .status(201)
+      .json(new ApiResponse(200, "User registered successfully", createdUser));
+  } finally {
+    fs.unlinkSync(dpLocalPath);
+  }
 });
 
 const loginUser = asyncHandler(async (req, res) => {
