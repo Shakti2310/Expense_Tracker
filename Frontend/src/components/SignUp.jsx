@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { toast } from "react-toastify";
 import assets from "../assets/assets.js";
 import AuthInput from "./AuthInput.jsx";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../api/userApi.js";
+import { LoggingContext } from "../contexts/LoggingContext.jsx";
 
 function SignUp({ setIsSignIn }) {
   const [fullname, setFullname] = useState("");
@@ -12,9 +13,14 @@ function SignUp({ setIsSignIn }) {
   const [password, setpassword] = useState("");
   const [defaultPicture, setDefaultPicture] = useState(null);
 
+  const setIsLogged = useContext(LoggingContext);
+
   const registerMutation = useMutation({
     mutationFn: registerUser,
-    onSuccess: (data) => toast.success(data.message),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setIsLogged(true);
+    },
     onError: (error) => {
       if (error?.status == 409) toast.error("User already exists");
       else toast.error("All details are required");
