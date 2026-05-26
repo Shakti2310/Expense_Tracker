@@ -5,4 +5,9 @@ const registerUser = async (formData) => {
   return res.data;
 };
 
-export { registerUser };
+const loginUser = async (formData) => {
+  const res = await API.post("/user/login", formData);
+  return res.data;
+};
+
+export { registerUser, loginUser };

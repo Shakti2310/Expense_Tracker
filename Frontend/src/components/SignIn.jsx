@@ -1,24 +1,67 @@
+import { useContext, useState } from "react";
 import assets from "../assets/assets.js";
 import AuthInput from "./AuthInput.jsx";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { LoggingContext } from "../contexts/LoggingContext.jsx";
+import { loginUser } from "../api/userApi.js";
 
 function SignIn({ setIsSignIn }) {
-  return (
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const setIsLogged = useContext(LoggingContext);
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setIsLogged(true);
+    },
+    onError: (error) => {
+      if (error?.status == "401") toast.error("Incorrect password");
+      else if (error?.status == "404") toast.error("User not exists");
+      else toast.error("Username and password is required");
+      console.log(error);
+    },
+  });
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      username: username.trim(),
+      password: password.trim(),
+    };
+
+    mutate(formData);
+  }
+
+  return isPending ? (
+    <div className="grid place-items-center min-h-[80vh]">
+      <div className="w-16 h-16 place-self-center border-4 border-gray-400 border-t-green-800 rounded-full animate-spin"></div>
+    </div>
+  ) : (
     <div className="transition-all rounded-lg ease-in-out duration-700 flex flex-col justify-center space-y-10 p-10 bg-black/20 text-sm">
       <div className="space-y-2">
         <h1 className="text-4xl font-bold">Sign in!</h1>
         <p className="text-sm">Enter to go unlimited access to your data</p>
       </div>
 
-      <form className="flex flex-col gap-5">
+      <form onSubmit={onSubmitHandler} className="flex flex-col gap-5">
         <AuthInput
           name={"Username"}
           type={"text"}
           msg={"Enter your username"}
+          setValue={setUsername}
+          value={username}
         />
         <AuthInput
           name={"Password"}
           type={"password"}
           msg={"Enter your password"}
+          setValue={setPassword}
+          value={password}
         />
 
         <div className="flex text-xs justify-between items-center">

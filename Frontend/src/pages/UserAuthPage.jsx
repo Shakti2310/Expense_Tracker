@@ -4,7 +4,7 @@ import SignUp from "../components/SignUp.jsx";
 import SignIn from "../components/SignIn.jsx";
 
 function UserAuthPage() {
-  const [isSignIn, setIsSignIn] = useState(false);
+  const [isSignIn, setIsSignIn] = useState(true);
 
   return (
     <div className="h-screen w-screen flex justify-center items-center">
