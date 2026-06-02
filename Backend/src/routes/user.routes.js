@@ -5,6 +5,7 @@ import {
   loginUser,
   logoutUser,
   regenerateJWT,
+  emailVerification,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyAccessToken } from "../middlewares/auth.middleware.js";
@@ -18,5 +19,6 @@ router.route("/list").get(getUsers);
 router.route("/login").post(loginUser);
 router.route("/logout").post(verifyAccessToken, logoutUser);
 router.route("/refresh-tokens").post(regenerateJWT);
+router.route("/verify-email").post(emailVerification);
 
 export default router;

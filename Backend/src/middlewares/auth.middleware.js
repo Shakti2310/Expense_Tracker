@@ -7,16 +7,25 @@ export const verifyAccessToken = asyncHandler(async (req, _, next) => {
   // Getting Access Token from client through cookies or headers
   const accessToken =
     req.cookies?.accessToken ||
-    req.header("Authorization").replace("Bearer ", "");
+    req.headers.authorization?.replace("Bearer ", "");
 
   // Error Check: Token is there or not
   if (!accessToken) throw new ApiError(400, "Access token not found");
 
   // Decoding token
-  const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+  try {
+    const decodedToken = jwt.verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECRET,
+    );
+  } catch (error) {
+    throw new ApiError(401, "Invalid or expired token");
+  }
 
   // Finding User through decoded token
-  const user = await User.findByIdAndUpdate(decodedToken?._id);
+  const user = await User.findById(decodedToken?._id).select(
+    "-password -refreshToken",
+  );
 
   // Error Check: User exists or not
   if (!user) throw new ApiError(400, "Invalid Access Token");

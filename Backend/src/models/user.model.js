@@ -35,6 +35,10 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
     refreshToken: {
       type: String,
     },
@@ -45,13 +49,11 @@ const userSchema = new Schema(
 // Middleware or Hook which will run the function before saving the object into DB
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-  if (!this.isModified("password")) return;
-
   this.password = await bcrypt.hash(this.password, 10);
 });
 
 // Custom method created for schema to check the password is correct or not
-userSchema.methods.checkPassword = async function (password) {
+userSchema.methods.verifyPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 

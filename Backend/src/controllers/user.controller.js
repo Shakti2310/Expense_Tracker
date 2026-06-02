@@ -1,11 +1,14 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import { generateOtp, generateOtpHtml } from "../utils/otpHandler.js";
 import User from "../models/user.model.js";
+import Otp from "../models/otp.model.js";
 import jwt from "jsonwebtoken";
 import { cookieOptions } from "../constants.js";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
+import sendEmail from "../configs/nodemailer.config.js";
 
 const generateJWT = async (userId) => {
   try {
@@ -35,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   try {
     // Checking any data is missing or not
-    if ([username, fullname, email, password].some((item) => item === ""))
+    if ([username, fullname, email, password].some((item) => !item?.trim()))
       throw new ApiError(400, "Details missing");
 
     // Finding user if already existed
@@ -71,6 +74,25 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if (!createdUser) throw new ApiError(500, "User not registered");
 
+    const otpCode = generateOtp();
+
+    const otp = await Otp.create({
+      userId: createdUser._id,
+      email: createdUser.email,
+      otpHash: otpCode,
+    });
+
+    if (!otp) throw new ApiError(500, "Otp not saved");
+
+    const otpHtml = generateOtpHtml(otpCode);
+
+    await sendEmail(
+      email,
+      "Email Verification",
+      `Your OTP is ${otpCode}`,
+      otpHtml,
+    );
+
     // Sending the response and status code
     return res
       .status(201)
@@ -95,10 +117,14 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) throw new ApiError(404, "user not found");
 
   // Checking user password
-  const isPasswordValid = await user.checkPassword(password);
+  const isPasswordValid = await user.verifyPassword(password);
 
   // Error if password is wrong
   if (!isPasswordValid) throw new ApiError(401, "Invalid password");
+
+  // Verification Check
+  if (!user.isVerified)
+    throw new ApiError(403, "Verify your email before login");
 
   // Tokens generated
   const { accessToken, refreshToken } = await generateJWT(user._id);
@@ -107,18 +133,7 @@ const loginUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, cookieOptions) // sending cookies
     .cookie("refreshToken", refreshToken, cookieOptions)
-    .json(
-      new ApiResponse(
-        200,
-        "User logged in",
-        {
-          user,
-          accessToken,
-          refreshToken,
-        },
-        "User logged in successfully",
-      ),
-    );
+    .json(new ApiResponse(200, { user }, "User logged in successfully"));
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
@@ -138,12 +153,14 @@ const regenerateJWT = asyncHandler(async (req, res) => {
   const clientRefreshToken =
     req?.cookies?.refreshToken || req?.body?.refreshToken;
 
+  if (!clientRefreshToken) throw new ApiError(401, "Refresh token required");
+
   const decodedToken = jwt.verify(
     clientRefreshToken,
     process.env.REFRESH_TOKEN_SECRET,
   );
 
-  const user = await findById(decodedToken?._id);
+  const user = await User.findById(decodedToken?._id);
 
   if (!user) throw new ApiError(401, "Invalid Refresh Token");
 
@@ -159,4 +176,28 @@ const regenerateJWT = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Access Token refreshed"));
 });
 
-export { getUsers, registerUser, loginUser, logoutUser, regenerateJWT };
+const emailVerification = asyncHandler(async (req, res) => {
+  const { email, clientOtp } = req.body;
+
+  if (!email || !clientOtp)
+    throw new ApiError(400, "email and otp is required");
+
+  const otp = await Otp.findOne({ email }, "otpHash");
+
+  if (!otp) throw new ApiError(401, "Email not registered");
+
+  const isOtpValid = await otp.verifyOtp(clientOtp);
+
+  if (!isOtpValid) throw new ApiError(404, "Otp is invalid");
+
+  return res.status(201).json(new ApiResponse(200, "Email verified"));
+});
+
+export {
+  getUsers,
+  registerUser,
+  loginUser,
+  logoutUser,
+  regenerateJWT,
+  emailVerification,
+};
