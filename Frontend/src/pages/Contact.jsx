@@ -1,7 +1,7 @@
 function Contact() {
   return (
     <>
-      <div className="bg-black h-[90%] rounded-lg">Contact</div>
+      <div>Contact</div>
     </>
   );
 }

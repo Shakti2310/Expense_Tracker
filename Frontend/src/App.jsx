@@ -1,26 +1,19 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
-import Navbar from "./components/Navbar.jsx";
-import UserAuthPage from "./pages/UserAuthPage.jsx";
 import { ToastContainer } from "react-toastify";
 import { LoggingContext } from "./contexts/LoggingContext.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 
 function App() {
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
   return (
-    <div className="bg-myGray bg-cover min-h-dvh font-poppins flex justify-center items-center text-white">
+    <div className="min-h-dvh font-nunito flex">
       <LoggingContext.Provider value={setIsLogged}>
         <ToastContainer theme="dark" />
-        {isLogged ? (
-          <>
-            <Navbar />
-            <Outlet />
-          </>
-        ) : (
-          <>
-            <UserAuthPage />
-          </>
-        )}
+        <Sidebar />
+        <div className="w-full overflow-hidden bg-blue-300">
+          <Outlet />
+        </div>
       </LoggingContext.Provider>
     </div>
   );
