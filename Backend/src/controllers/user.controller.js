@@ -24,6 +24,10 @@ const generateJWT = async (userId) => {
   }
 };
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+  res.json({ message: "This is a protected route", user: req.user });
+} );
+
 const getUsers = asyncHandler(async (_, res) => {
   const allUsers = await User.find({});
   res.status(200).json(new ApiResponse(200, "All users fetched", allUsers));
@@ -194,6 +198,7 @@ const emailVerification = asyncHandler(async (req, res) => {
 });
 
 export {
+  getCurrentUser,
   getUsers,
   registerUser,
   loginUser,
