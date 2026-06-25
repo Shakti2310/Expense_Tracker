@@ -24,7 +24,7 @@ const expenseSchema = new Schema(
     },
     paymentMethod: {
       Enum: ["cash", "upi", "card", "netbanking"],
-      requied: true,
+      required: true,
     },
   },
   { timestamps: true },
