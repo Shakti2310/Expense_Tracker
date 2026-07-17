@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
 import { ToastContainer } from "react-toastify";
-import { LoggingContext } from "./contexts/LoggingContext.jsx";
-import Sidebar from "./components/Sidebar.jsx";
+import { LoggingContext } from "../contexts/LoggingContext.jsx";
+import Sidebar from "../components/layout/Sidebar.jsx";
 
 function App() {
   const [isLogged, setIsLogged] = useState(true);
@@ -11,7 +11,7 @@ function App() {
       <LoggingContext.Provider value={setIsLogged}>
         <ToastContainer theme="dark" />
         <Sidebar />
-        <div className="w-full overflow-hidden bg-blue-300">
+        <div className="w-full overflow-hidden bg-gray-100">
           <Outlet />
         </div>
       </LoggingContext.Provider>
