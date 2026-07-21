@@ -1,7 +1,15 @@
 import React from "react";
 import assets from "../../assets/assets.js";
-import AuthInput from "../../components/auth/AuthInput.jsx";
-import { useNavigate } from "react-router";
+import { NavLink } from "react-router";
+import {
+  FiAtSign,
+  FiUser,
+  FiMail,
+  FiLock,
+  FiUpload,
+  FiEye,
+  FiEyeOff,
+} from "react-icons/fi";
 
 function SignUpForm({
   fullname,
@@ -12,131 +20,210 @@ function SignUpForm({
   setUsername,
   password,
   setPassword,
+  showPassword,
+  setShowPassword,
+  agreed,
+  setAgreed,
   defaultPicture,
   setDefaultPicture,
   onSubmitHandler,
 }) {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-6">
-        {/* Header */}
-        <div className="space-y-2 text-center mb-5">
-          <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-myGreenMD to-myGreenSM rounded-xl mx-auto">
-            <span className="text-white font-bold text-lg">X</span>
+    <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-xs">
+      {/* Logo */}
+      <div className="flex items-center justify-center gap-2">
+        <img src={assets.logo} alt="XseTrack logo" className="h-8 w-8" />
+        <span className="text-xl font-bold text-slate-900">
+          Xse<span className="text-blue-500">Track</span>
+        </span>
+      </div>
+
+      <h1 className="text-2xl font-bold text-center text-slate-900 mt-2">
+        Sign Up to XseTrack
+      </h1>
+      <p className="text-center text-slate-500 mt-1 mb-1">
+        Already have an account?{" "}
+        <NavLink
+          to="/authentication/login"
+          className="text-blue-500 font-medium hover:underline"
+        >
+          Log In
+        </NavLink>
+      </p>
+
+      <form onSubmit={onSubmitHandler} className="space-y-2">
+        {/* Username */}
+        <div>
+          <label className="block text-slate-900 font-semibold">Username</label>
+          <div className="relative">
+            <FiAtSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+            <input
+              type="text"
+              placeholder="@yourusername"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+            />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 font-poppins">
-            Create Account
-          </h1>
-          <p className="text-gray-600 text-xs">
-            Join us to start tracking your expenses
-          </p>
         </div>
 
-        {/* Form */}
-        <form className="space-y-4" onSubmit={onSubmitHandler}>
-          <div className="grid grid-cols-3 gap-4">
-            {/* Profile Picture Section */}
-            <div className="flex flex-col items-center justify-start space-y-3 pb-4 border-r border-gray-200">
-              <label
-                htmlFor="defaultPicture"
-                className="flex flex-col items-center cursor-pointer"
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-myGreenMD/20 to-myGreenSM/20 border-2 border-dashed border-myGreenMD flex items-center justify-center hover:bg-myGreenMD/30 transition-colors">
-                  <img
-                    className="w-9 object-contain"
-                    src={
-                      defaultPicture ? assets.uploadSuccess : assets.uploadImg
-                    }
-                    alt="Upload"
-                  />
-                </div>
-                <span className="text-xs text-myGreenMD font-semibold mt-2 hover:text-myGreenSM transition-colors">
-                  {defaultPicture ? "Change Photo" : "Upload Photo"}
-                </span>
-              </label>
-              <input
-                type="file"
-                name="defaultPicture"
-                id="defaultPicture"
-                accept="image/*"
-                onChange={(e) => setDefaultPicture(e.target.files[0])}
-                hidden
-              />
+        {/* Full Name */}
+        <div>
+          <label className="block text-slate-900 font-semibold">
+            Full Name
+          </label>
+          <div className="relative">
+            <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+            <input
+              type="text"
+              placeholder="John Doe"
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
+              className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+            />
+          </div>
+        </div>
 
-              {/* Already have account */}
-              <div className="mt-auto pt-4 border-t border-gray-200 w-full text-center">
-                <p className="text-xs text-gray-600 mb-1">
-                  Already have an account?
-                </p>
-                <button
-                  className="text-myGreenMD hover:text-myGreenSM font-semibold text-xs transition-colors active:scale-95"
-                  type="button"
-                  onClick={() => navigate("/authentication/login")}
-                >
-                  Sign In
-                </button>
+        {/* Email */}
+        <div>
+          <label className="block text-slate-900 font-semibold">Email</label>
+          <div className="relative">
+            <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+            <input
+              type="email"
+              placeholder="example@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="block text-slate-900 font-semibold">Password</label>
+          <div className="relative">
+            <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-3 cursor-pointer top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? (
+                <FiEye className="h-5 w-5" />
+              ) : (
+                <FiEyeOff className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Profile Image */}
+        <div>
+          <label
+            htmlFor="defaultPicture"
+            className="block text-slate-900 font-semibold space-y-1"
+          >
+            Profile Image
+            <div className="flex justify-center">
+              <div className="h-15 w-15 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+                {defaultPicture ? (
+                  <img
+                    src={defaultPicture}
+                    alt="Profile preview"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <FiUser className="h-10 w-10 text-slate-400" />
+                )}
               </div>
             </div>
+            <span
+              type="button"
+              className="w-full flex items-center justify-center gap-2 py-2 cursor-pointer border border-slate-200 rounded-lg text-slate-700 font-medium hover:bg-slate-50"
+            >
+              <FiUpload className="h-3 w-3" />
+              Upload Profile Picture
+            </span>
+            <input
+              type="file"
+              name="defaultPicture"
+              id="defaultPicture"
+              accept="image/*"
+              onChange={(e) => setDefaultPicture(e.target.files[0])}
+              hidden
+            />
+          </label>
+        </div>
 
-            {/* Form Fields */}
-            <div className="col-span-2 space-y-3">
-              <AuthInput
-                name={"Full Name"}
-                type={"text"}
-                msg={"Enter your full name"}
-                setValue={setFullname}
-                value={fullname}
-              />
-              <AuthInput
-                name={"Email"}
-                type={"email"}
-                msg={"Enter your email address"}
-                setValue={setEmail}
-                value={email}
-              />
-              <AuthInput
-                name={"Username"}
-                type={"text"}
-                msg={"Choose a username"}
-                setValue={setUsername}
-                value={username}
-              />
-              <AuthInput
-                name={"Password"}
-                type={"password"}
-                msg={"Create a strong password"}
-                setValue={setPassword}
-                value={password}
-              />
+        {/* Terms */}
+        <label className="flex gap-2 items-center text-slate-700">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="h-2.5 w-2.5 rounded cursor-grab active:cursor-grabbing border-slate-300"
+          />
+          <span>
+            I agree to the{" "}
+            <NavLink to="#" className="text-blue-500 hover:underline">
+              Terms of Service
+            </NavLink>{" "}
+            &{" "}
+            <NavLink to="#" className="text-blue-500 hover:underline">
+              Privacy Policy
+            </NavLink>
+            .
+          </span>
+        </label>
 
-              {/* Remember Checkbox */}
-              <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-                />
-                <span>I agree to the terms and conditions</span>
-              </label>
-            </div>
-          </div>
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white cursor-pointer font-semibold py-3 rounded-full transition-colors"
+        >
+          Sign Up
+        </button>
+      </form>
 
-          {/* Sign Up Button */}
-          <button
-            className="w-full bg-gradient-to-r from-myGreenMD to-myGreenSM hover:shadow-lg hover:scale-[1.02] active:scale-95 text-white font-semibold py-2.5 rounded-lg transition-all duration-200 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-myGreenMD/50"
-            type="submit"
-          >
-            Create Account
-          </button>
+      {/* Divider */}
+      <div className="flex items-center mt-1 mb-1 gap-3">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-slate-600">Or sign up with:</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 border-t border-gray-200"></div>
-            <span className="text-xs text-gray-500">OR</span>
-            <div className="flex-1 border-t border-gray-200"></div>
-          </div>
-        </form>
+      {/* Social */}
+      <div className="flex items-center justify-center gap-10">
+        <button
+          type="button"
+          aria-label="Sign up with Google"
+          className="h-11 w-11 rounded-full cursor-pointer border border-slate-200 flex items-center justify-center hover:bg-black/5"
+        >
+          <img src={assets.googleIcon} alt="Google" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          aria-label="Sign up with Facebook"
+          className="h-11 w-11 rounded-full cursor-pointer border border-slate-200 flex items-center justify-center hover:bg-black/5"
+        >
+          <img src={assets.facebookIcon} alt="Facebook" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          aria-label="Sign up with GitHub"
+          className="h-11 w-11 rounded-full cursor-pointer border border-slate-200 flex items-center justify-center hover:bg-black/5"
+        >
+          <img src={assets.githubIcon} alt="GitHub" className="h-5 w-5" />
+        </button>
       </div>
     </div>
   );

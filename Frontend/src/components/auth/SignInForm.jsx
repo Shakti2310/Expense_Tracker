@@ -1,128 +1,132 @@
 import React from "react";
 import assets from "../../assets/assets.js";
-import AuthInput from "../../components/auth/AuthInput.jsx";
-import { useNavigate } from "react-router";
+import { NavLink } from "react-router";
+import { FiAtSign, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
 function SignInForm({
   username,
   setUsername,
   password,
   setPassword,
+  showPassword,
+  setShowPassword,
   onSubmitHandler,
 }) {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6">
-        {/* Header */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-myGreenMD to-myGreenSM rounded-xl mx-auto">
-            <span className="text-white font-bold text-xl">X</span>
+    <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-sm">
+      {/* Logo */}
+      <div className="flex items-center justify-center gap-2">
+        <img src={assets.logo} alt="NexusTech logo" className="h-8 w-8" />
+        <span className="text-xl font-bold text-slate-900">
+          Xse<span className="text-blue-500">Track</span>
+        </span>
+      </div>
+
+      <h1 className="text-2xl font-bold text-center text-slate-900 mt-2">
+        Sign In to XseTrack
+      </h1>
+      <p className="text-center text-slate-500 mt-1 mb-4">
+        New to XseTrack?{" "}
+        <NavLink
+          to="/authentication/register"
+          className="text-blue-500 font-medium hover:underline"
+        >
+          Create an account
+        </NavLink>
+      </p>
+
+      <form onSubmit={onSubmitHandler} className="space-y-4">
+        {/* Username */}
+        <div>
+          <label className="block text-slate-900 font-semibold">Username</label>
+          <div className="relative">
+            <FiAtSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+            <input
+              type="text"
+              placeholder="@yourusername"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+            />
           </div>
-          <h1 className="text-3xl font-bold text-center text-gray-900 font-poppins">
-            Welcome Back
-          </h1>
-          <p className="text-center text-gray-600 text-sm">
-            Sign in to access your expense tracking
-          </p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={onSubmitHandler} className="space-y-5">
-          <AuthInput
-            name={"Username"}
-            type={"text"}
-            msg={"Enter your username"}
-            setValue={setUsername}
-            value={username}
-          />
-          <AuthInput
-            name={"Password"}
-            type={"password"}
-            msg={"Enter your password"}
-            setValue={setPassword}
-            value={password}
-          />
-
-          {/* Remember & Forgot */}
-          <div className="flex justify-between items-center text-xs text-gray-600">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 cursor-pointer"
-              />
-              <span>Remember me</span>
-            </label>
+        {/* Password */}
+        <div>
+          <label className="block text-slate-900 font-semibold">Password</label>
+          <div className="relative">
+            <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+            />
             <button
               type="button"
-              className="text-myGreenMD hover:text-myGreenSM font-semibold transition-colors active:scale-95"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-3 cursor-pointer top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              aria-label="Toggle password visibility"
             >
-              Forgot password?
+              {showPassword ? (
+                <FiEye className="h-5 w-5" />
+              ) : (
+                <FiEyeOff className="h-5 w-5" />
+              )}
             </button>
           </div>
+        </div>
 
-          {/* Sign In Button */}
-          <button
-            className="w-full bg-gradient-to-r from-myGreenMD to-myGreenSM hover:shadow-lg hover:scale-[1.02] active:scale-95 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-myGreenMD/50"
-            type="submit"
+        {/* Forgot Password */}
+        <div className="text-end">
+          <NavLink
+            to="/authentication/forgot-password"
+            className="text-blue-500 font-medium hover:underline"
           >
-            Sign In
-          </button>
+            Forgot your password?
+          </NavLink>
+        </div>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 border-t border-gray-200"></div>
-            <span className="text-xs text-gray-500">OR</span>
-            <div className="flex-1 border-t border-gray-200"></div>
-          </div>
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white cursor-pointer font-semibold py-3 rounded-full transition-colors"
+        >
+          Sign In
+        </button>
+      </form>
 
-          {/* Social Buttons */}
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 p-3 bg-gray-100 hover:bg-gray-200 hover:scale-[1.05] active:scale-95 rounded-lg transition-all border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            >
-              <img
-                className="w-5 h-5 object-contain"
-                src={assets.googleIcon}
-                alt="Google"
-              />
-            </button>
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 p-3 bg-gray-100 hover:bg-gray-200 hover:scale-[1.05] active:scale-95 rounded-lg transition-all border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            >
-              <img
-                className="w-5 h-5 object-contain"
-                src={assets.githubIcon}
-                alt="GitHub"
-              />
-            </button>
-            <button
-              type="button"
-              className="flex items-center justify-center gap-2 p-3 bg-gray-100 hover:bg-gray-200 hover:scale-[1.05] active:scale-95 rounded-lg transition-all border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            >
-              <img
-                className="w-5 h-5 object-contain"
-                src={assets.facebookIcon}
-                alt="Facebook"
-              />
-            </button>
-          </div>
+      {/* Divider */}
+      <div className="flex items-center mt-1 mb-1 gap-3">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-slate-600">Or sign in with:</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
 
-          {/* Sign Up Link */}
-          <p className="text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/authentication/register")}
-              className="text-myGreenMD font-semibold hover:text-myGreenSM transition-colors active:scale-95"
-            >
-              Sign Up
-            </button>
-          </p>
-        </form>
+      {/* Social */}
+      <div className="flex items-center justify-center gap-10">
+        <button
+          type="button"
+          aria-label="Sign up with Google"
+          className="h-11 w-11 rounded-full cursor-pointer border border-slate-200 flex items-center justify-center hover:bg-black/5"
+        >
+          <img src={assets.googleIcon} alt="Google" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          aria-label="Sign up with Facebook"
+          className="h-11 w-11 rounded-full cursor-pointer border border-slate-200 flex items-center justify-center hover:bg-black/5"
+        >
+          <img src={assets.facebookIcon} alt="Facebook" className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          aria-label="Sign up with GitHub"
+          className="h-11 w-11 rounded-full cursor-pointer border border-slate-200 flex items-center justify-center hover:bg-black/5"
+        >
+          <img src={assets.githubIcon} alt="GitHub" className="h-5 w-5" />
+        </button>
       </div>
     </div>
   );

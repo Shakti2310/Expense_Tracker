@@ -11,13 +11,14 @@ function SignUp() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [defaultPicture, setDefaultPicture] = useState(null);
 
   const { isPending, mutate } = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
       toast.success(data.message);
-      console.log(data);
       localStorage.setItem("email", data.email);
       navigate("/authentication/register/email-verification");
     },
@@ -52,6 +53,10 @@ function SignUp() {
       setUsername={setUsername}
       password={password}
       setPassword={setPassword}
+      showPassword={showPassword}
+      setShowPassword={setShowPassword}
+      agreed={agreed}
+      setAgreed={setAgreed}
       defaultPicture={defaultPicture}
       setDefaultPicture={setDefaultPicture}
       onSubmitHandler={onSubmitHandler}

@@ -9,6 +9,7 @@ import SignInForm from "../../components/auth/SignInForm.jsx";
 function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { isPending, mutate } = useMutation({
     mutationFn: loginUser,
@@ -42,6 +43,8 @@ function SignIn() {
       setUsername={setUsername}
       password={password}
       setPassword={setPassword}
+      showPassword={showPassword}
+      setShowPassword={setShowPassword}
       onSubmitHandler={onSubmitHandler}
     />
   );
