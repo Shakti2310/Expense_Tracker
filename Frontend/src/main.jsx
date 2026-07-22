@@ -85,7 +85,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ToastContainer theme="dark" />
+      <ToastContainer theme="light" />
       <RouterProvider router={router} />
     </QueryClientProvider>
   </StrictMode>,

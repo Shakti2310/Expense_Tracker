@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../../api/user.api.js";
 import Loading from "../../components/ui/loading.jsx";
 import SignUpForm from "../../components/auth/SignUpForm.jsx";
+import signUpSchema from "../../schemas/signUp.schema.js";
 
 function SignUp() {
   const [fullname, setFullname] = useState("");
@@ -31,14 +32,34 @@ function SignUp() {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
+    const formObject = {
+      username,
+      fullname,
+      email,
+      password,
+      defaultPicture,
+    };
+
+    // Validate form data using Zod schema
+    try {
+      const result = signUpSchema.safeParse(formObject);
+      if (!result.success) {
+        toast.error(result.error.issues[0].message);
+        return;
+      }
+    } catch (error) {
+      toast.error("Validation failed. Please check your input.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("username", username.trim());
-    formData.append("fullname", fullname.trim());
-    formData.append("email", email.trim());
-    formData.append("password", password.trim());
+    formData.append("username", username);
+    formData.append("fullname", fullname);
+    formData.append("email", email);
+    formData.append("password", password);
     formData.append("defaultPicture", defaultPicture);
 
-    mutate(formData);
+    //mutate(formData);
   };
 
   return isPending ? (

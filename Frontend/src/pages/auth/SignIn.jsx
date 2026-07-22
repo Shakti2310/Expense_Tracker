@@ -32,7 +32,18 @@ function SignIn() {
       password: password.trim(),
     };
 
-    mutate(formData);
+    try {
+      const result = signInSchema.safeParse(formData);
+      if (!result.success) {
+        toast.error(result.error.issues[0].message);
+        return;
+      }
+    } catch (error) {
+      toast.error("Validation failed. Please check your input.");
+      return;
+    }
+
+    mutate(result.data);
   };
 
   return isPending ? (
