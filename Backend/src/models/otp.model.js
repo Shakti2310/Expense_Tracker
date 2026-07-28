@@ -29,6 +29,16 @@ otpSchema.methods.verifyOtp = async function (otp) {
   return await bcrypt.compare(otp, this.otpHash);
 };
 
+otpSchema.methods.generateVerificationToken = function () {
+  return jwt.sign(
+    { _id: this._id, email: this.email },
+    process.env.VERIFICATION_TOKEN_SECRET,
+    {
+      expiresIn: process.env.VERIFICATION_TOKEN_EXPIRY,
+    },
+  );
+};
+
 otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 });
 
 const Otp = mongoose.model("Otp", otpSchema);

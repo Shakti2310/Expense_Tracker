@@ -9,14 +9,15 @@ import { cookieOptions } from "../constants.js";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
 import sendEmail from "../configs/nodemailer.config.js";
+import { saveNewOtp } from "./otp.controller.js";
 
-const generateJWT = async (userId) => {
+const generateAuthTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
     const accessToken = await user.generateAccessToken();
     const refreshToken = await user.generateRefreshToken();
 
-    await user.updateOne({ refreshToken: refreshToken });
+    await user.updateOne({ $set: { refreshToken: refreshToken } });
 
     return { accessToken, refreshToken };
   } catch (error) {
@@ -26,11 +27,6 @@ const generateJWT = async (userId) => {
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   res.json({ message: "This is a protected route", user: req.user });
-} );
-
-const getUsers = asyncHandler(async (_, res) => {
-  const allUsers = await User.find({});
-  res.status(200).json(new ApiResponse(200, "All users fetched", allUsers));
 });
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -45,14 +41,14 @@ const registerUser = asyncHandler(async (req, res) => {
     if ([username, fullname, email, password].some((item) => !item?.trim()))
       throw new ApiError(400, "Details missing");
 
+    // Checking for picture is provided or not
+    if (!dpLocalPath) throw new ApiError(400, "Picture not found");
+
     // Finding user if already existed
     const existedUser = await User.findOne({ $or: [{ username }, { email }] });
 
     // Throwing error if user is existed already
     if (existedUser) throw new ApiError(409, "User already existed");
-
-    // Checking for picture is provided or not
-    if (!dpLocalPath) throw new ApiError(400, "Picture not found");
 
     // Uploading dp to Cloudinary
     const defaultPicture = await cloudinary.uploader.upload(dpLocalPath, {
@@ -78,17 +74,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if (!createdUser) throw new ApiError(500, "User not registered");
 
-    const otpCode = generateOtp();
+    const { otp, otpCode, otpHtml } = await saveNewOtp(createdUser);
 
-    const otp = await Otp.create({
-      userId: createdUser._id,
-      email: createdUser.email,
-      otpHash: otpCode,
-    });
-
-    if (!otp) throw new ApiError(500, "Otp not saved");
-
-    const otpHtml = generateOtpHtml(otpCode);
+    const verificationToken = await otp.generateVerificationToken();
+    if (!verificationToken)
+      throw new ApiError(500, "Verification token not generated");
 
     await sendEmail(
       email,
@@ -100,7 +90,10 @@ const registerUser = asyncHandler(async (req, res) => {
     // Sending the response and status code
     return res
       .status(201)
+      .cookie("verificationToken", verificationToken, cookieOptions)
       .json(new ApiResponse(200, "User registered successfully", createdUser));
+  } catch (error) {
+    throw new ApiError(500, "Error registering user", error);
   } finally {
     fs.unlinkSync(dpLocalPath);
   }
@@ -131,7 +124,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Verify your email before login");
 
   // Tokens generated
-  const { accessToken, refreshToken } = await generateJWT(user._id);
+  const { accessToken, refreshToken } = await generateAuthTokens(user._id);
 
   return res
     .status(200)
@@ -153,7 +146,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User logged out successfully"));
 });
 
-const regenerateJWT = asyncHandler(async (req, res) => {
+const regenerateAccessToken = asyncHandler(async (req, res) => {
   const clientRefreshToken =
     req?.cookies?.refreshToken || req?.body?.refreshToken;
 
@@ -171,7 +164,7 @@ const regenerateJWT = asyncHandler(async (req, res) => {
   if (user?.refreshToken !== clientRefreshToken)
     throw new ApiError(401, "Refresh Token expired or used");
 
-  const { accessToken, refreshToken } = await generateJWT(user._id);
+  const { accessToken, refreshToken } = await generateAuthTokens(user._id);
 
   res
     .status(200)
@@ -180,29 +173,33 @@ const regenerateJWT = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Access Token refreshed"));
 });
 
-const emailVerification = asyncHandler(async (req, res) => {
-  const { email, clientOtp } = req.body;
+const verifyUser = asyncHandler(async (req, res) => {
+  try {
+    const { clientOtp } = req.body;
 
-  if (!email || !clientOtp)
-    throw new ApiError(400, "email and otp is required");
+    if (!clientOtp) throw new ApiError(400, "email and otp is required");
+    
+    const email = req.user?.email;
 
-  const otp = await Otp.findOne({ email }, "otpHash");
+    const otp = await Otp.findOne({ email }, "otpHash");
 
-  if (!otp) throw new ApiError(401, "Email not registered");
+    if (!otp) throw new ApiError(401, "Email not registered");
 
-  const isOtpValid = await otp.verifyOtp(clientOtp);
+    const isOtpValid = await otp.verifyOtp(clientOtp);
 
-  if (!isOtpValid) throw new ApiError(404, "Otp is invalid");
+    if (!isOtpValid) throw new ApiError(404, "Otp is invalid");
+  } catch (error) {
+    throw new ApiError(500, "Error verifying user", error);
+  }
 
   return res.status(201).json(new ApiResponse(200, "Email verified"));
 });
 
 export {
   getCurrentUser,
-  getUsers,
   registerUser,
   loginUser,
   logoutUser,
-  regenerateJWT,
-  emailVerification,
+  regenerateAccessToken,
+  verifyUser,
 };
