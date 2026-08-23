@@ -1,3 +1,6 @@
+import Otp from "../models/otp.model.js";
+import ApiError from "../utils/ApiError.js";
+
 const generateOtp = () => {
   const otp = Math.floor(100000 + Math.random() * 900000);
   return otp.toString();
@@ -39,4 +42,24 @@ const generateOtpHtml = (otp) => {
 </html>`;
 };
 
-export { generateOtp, generateOtpHtml };
+const saveNewOtp = async (user) => {
+  try {
+    const otpCode = generateOtp();
+    
+    const otp = await Otp.create({
+      userId: user._id,
+      email: user.email,
+      otpHash: otpCode,
+    });
+    
+    if (!otp) throw new ApiError(500, "Otp not saved");
+
+    const otpHtml = generateOtpHtml(otpCode);
+
+    return { otp, otpCode, otpHtml };
+  } catch (error) {
+    throw new ApiError(500, "Error saving OTP", error);
+  }
+};
+
+export { generateOtp, generateOtpHtml, saveNewOtp };

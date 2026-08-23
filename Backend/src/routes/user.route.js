@@ -23,7 +23,7 @@ router.route("/login").post(loginUser);
 router.route("/logout").post(verifyAccessToken, logoutUser);
 router.route("/refresh-tokens").post(regenerateAccessToken);
 router.route("/verify-email").post(verifyEmailToken, verifyUser);
+router.route("/resend-otp").post(verifyEmailToken,resendOtp);
 router.route("/current-user").get(verifyAccessToken, getCurrentUser);
-router.route("/resend-otp").post(verifyEmailToken, resendOtp);
 
 export default router;

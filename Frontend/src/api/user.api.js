@@ -1,8 +1,18 @@
 import API from "./axios.js";
 import authAPI from "./axios.js";
 
+const getUser = async () => {
+  const res = await authAPI.get("/users/current-user");
+  return res.data;
+};
+
 const registerUser = async (formData) => {
   const res = await authAPI.post("/users/register", formData);
+  return res.data;
+};
+
+const verifyUser = async (formData) => {
+  const res = await authAPI.post("/users/verify-email", formData);
   return res.data;
 };
 
@@ -11,9 +21,9 @@ const loginUser = async (formData) => {
   return res.data;
 };
 
-const getUser = async () => {
-  const res = await authAPI.get("/users/current-user");
+const logoutUser = async () => {
+  const res = await authAPI.post("/users/logout");
   return res.data;
-}
+};
 
-export { registerUser, loginUser, getUser };
+export { registerUser, loginUser, getUser, verifyUser, logoutUser };

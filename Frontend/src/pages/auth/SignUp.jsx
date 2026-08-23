@@ -20,7 +20,6 @@ function SignUp() {
     mutationFn: registerUser,
     onSuccess: (data) => {
       toast.success(data.message);
-      localStorage.setItem("email", data.email);
       navigate("/authentication/register/email-verification");
     },
     onError: (error) => {
@@ -59,7 +58,7 @@ function SignUp() {
     formData.append("password", password);
     formData.append("defaultPicture", defaultPicture);
 
-    //mutate(formData);
+    mutate(formData);
   };
 
   return isPending ? (

@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const otpSchema = new Schema(
   {
@@ -31,7 +32,7 @@ otpSchema.methods.verifyOtp = async function (otp) {
 
 otpSchema.methods.generateVerificationToken = function () {
   return jwt.sign(
-    { _id: this._id, email: this.email },
+    { _id: this.userId, email: this.email },
     process.env.VERIFICATION_TOKEN_SECRET,
     {
       expiresIn: process.env.VERIFICATION_TOKEN_EXPIRY,
