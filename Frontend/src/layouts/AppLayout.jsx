@@ -9,7 +9,7 @@ function AppLayout() {
     <div className="min-h-dvh font-nunito flex">
       <LoggingContext.Provider value={setIsLogged}>
         <Sidebar />
-        <div className="w-full overflow-hidden bg-gray-100">
+        <div className="w-full overflow-hidden bg-gray-100 dark:bg-gray-950">
           <Outlet />
         </div>
       </LoggingContext.Provider>

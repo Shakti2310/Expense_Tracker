@@ -106,7 +106,7 @@ function Home() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 overflow-y-auto">
+    <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 overflow-y-auto">
       {/* Main Content */}
       <div className="px-8 py-12">
         {/* Hero Section */}
@@ -115,13 +115,13 @@ function Home() {
             {/* Left Content */}
             <div className="space-y-6">
               <div className="space-y-3">
-                <h1 className="text-5xl font-bold text-gray-900 font-poppins leading-tight">
+                <h1 className="text-5xl font-bold text-gray-900 dark:text-white font-poppins leading-tight">
                   Take Control of Your{" "}
                   <span className="bg-gradient-to-r from-myGreenMD to-myGreenSM bg-clip-text text-transparent">
                     Finances
                   </span>
                 </h1>
-                <p className="text-lg text-gray-600">
+                <p className="text-lg text-gray-600 dark:text-gray-400">
                   Smart expense tracking and budget management to help you
                   achieve your financial goals
                 </p>
@@ -130,14 +130,14 @@ function Home() {
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => navigate("/authentication/register")}
-                  className="px-8 py-3.5 bg-gradient-to-r from-myGreenMD to-myGreenSM text-white font-semibold rounded-xl hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 group"
+                  className="px-8 py-3.5 bg-gradient-to-r from-myGreenMD to-myGreenSM text-white font-semibold rounded-full hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 group cursor-pointer"
                 >
                   Get Started
                   <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button
                   onClick={() => navigate("/authentication/login")}
-                  className="px-8 py-3.5 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-myGreenMD hover:text-myGreenMD hover:bg-myGreenMD/5 transition-all"
+                  className="px-8 py-3.5 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-full hover:border-myGreenMD hover:text-myGreenM cursor-pointer hover:bg-myGreenMD/5 transition-all"
                 >
                   Sign In
                 </button>
@@ -147,22 +147,28 @@ function Home() {
               <div className="flex gap-6 pt-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-myGreenMD"></div>
-                  <span className="text-sm text-gray-600">
-                    <span className="font-semibold text-gray-900">Free</span> to
-                    use
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      Free
+                    </span>{" "}
+                    to use
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-myGreenMD"></div>
-                  <span className="text-sm text-gray-600">
-                    <span className="font-semibold text-gray-900">Secure</span>{" "}
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      Secure
+                    </span>{" "}
                     & Private
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-myGreenMD"></div>
-                  <span className="text-sm text-gray-600">
-                    <span className="font-semibold text-gray-900">Always</span>{" "}
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      Always
+                    </span>{" "}
                     Updated
                   </span>
                 </div>
@@ -194,10 +200,10 @@ function Home() {
         {/* Features Section */}
         <div className="max-w-6xl mx-auto mb-16">
           <div className="text-center mb-12 space-y-3">
-            <h2 className="text-4xl font-bold text-gray-900 font-poppins">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white font-poppins">
               Powerful Features
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               Everything you need to manage your finances effectively
             </p>
           </div>
@@ -208,17 +214,19 @@ function Home() {
               return (
                 <div
                   key={idx}
-                  className={`p-6 rounded-2xl bg-gradient-to-br ${feature.color} border ${feature.borderColor} hover:shadow-lg transition-all hover:-translate-y-1 group cursor-pointer`}
+                  className={`p-6 rounded-2xl bg-gradient-to-br ${feature.color} dark:from-white/5 dark:to-white/5 border ${feature.borderColor} dark:border-gray-800 hover:shadow-lg transition-all hover:-translate-y-1 group cursor-pointer`}
                 >
                   <div
-                    className={`w-12 h-12 rounded-xl bg-white/60 flex items-center justify-center mb-4 group-hover:bg-white transition-colors ${feature.iconColor}`}
+                    className={`w-12 h-12 rounded-xl bg-white/60 dark:bg-white/10 flex items-center justify-center mb-4 group-hover:bg-white dark:group-hover:bg-white/20 transition-colors ${feature.iconColor}`}
                   >
                     <IconComponent size={24} />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-600">{feature.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {feature.description}
+                  </p>
                 </div>
               );
             })}
@@ -227,11 +235,11 @@ function Home() {
 
         {/* Locked Features Notice */}
         <div className="max-w-6xl mx-auto mb-16">
-          <div className="bg-gradient-to-r from-blue-50/50 to-blue-100/50 border border-blue-200/50 rounded-2xl p-8">
+          <div className="bg-gradient-to-r from-blue-50/50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/10 border border-blue-200/50 dark:border-blue-500/20 rounded-2xl p-8">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-500/10 rounded-xl">
+              <div className="p-3 bg-blue-500/10 dark:bg-blue-500/20 rounded-xl">
                 <svg
-                  className="w-6 h-6 text-blue-600"
+                  className="w-6 h-6 text-blue-600 dark:text-blue-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -245,10 +253,10 @@ function Home() {
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
                   Premium Features Unlocked After Sign Up
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   All advanced features like detailed analytics, budget
                   management, and financial reports are available after you
                   create an account and log in.
@@ -271,13 +279,15 @@ function Home() {
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => navigate("/authentication/register")}
-                className="px-8 py-3.5 bg-white text-myGreenMD font-semibold rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+                className="px-8 py-3.5 bg-white text-myGreenMD font-semibold rounded-full hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all cursor-pointer
+                "
               >
                 Create Free Account
               </button>
               <button
                 onClick={() => navigate("/authentication/login")}
-                className="px-8 py-3.5 border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all"
+                className="px-8 py-3.5 border-2 border-white text-white font-semibold rounded-full hover:bg-white/10 transition-all cursor-pointer
+                "
               >
                 Sign In
               </button>
@@ -286,7 +296,7 @@ function Home() {
         </div>
 
         {/* Footer */}
-        <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-200 text-center text-gray-600 text-sm">
+        <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-gray-600 dark:text-gray-400 text-sm">
           <p>
             © 2026 XseTrack. All rights reserved. | Secure • Private • Open
             Source

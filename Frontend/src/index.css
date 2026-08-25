@@ -4,6 +4,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --color-myGreenLG: #14570f;
   --color-myGreenMD: #28ad1f;
