@@ -6,7 +6,7 @@ const signUpSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
   defaultPicture: z
-    .file()
+    .file("No file selected, Please select a profile picture")
     .mime(["image/jpeg", "image/png"], "Only JPEG and PNG images are allowed")
     .max(5 * 1024 * 1024, "File size must be less than 5MB"),
 });
