@@ -24,9 +24,8 @@ function Home() {
       toast.success(`Welcome back, ${data.fullname.split(" ")[0]}!`);
     },
     onError: (error) => {
-      if (error?.status !== 401) {
+      if (error?.status !== 401)
         toast.error("An error occurred while checking authentication");
-      }
     },
   });
 
