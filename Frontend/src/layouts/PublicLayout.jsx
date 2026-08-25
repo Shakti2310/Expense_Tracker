@@ -1,10 +1,13 @@
-import React from 'react'
-import { Outlet } from 'react-router'
+import { Outlet } from "react-router";
+import Navbar from "../components/layout/Navbar";
 
 function PublicLayout() {
   return (
-    <Outlet/>
-  )
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
 }
 
-export default PublicLayout
+export default PublicLayout;

@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 import { LoggingContext } from "../contexts/LoggingContext.jsx";
 import Sidebar from "../components/layout/Sidebar.jsx";
 
-function App() {
+function AppLayout() {
   const [isLogged, setIsLogged] = useState(true);
   return (
     <div className="min-h-dvh font-nunito flex">
@@ -17,4 +17,4 @@ function App() {
   );
 }
 
-export default App;
+export default AppLayout;

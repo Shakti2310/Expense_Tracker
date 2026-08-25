@@ -1,8 +1,6 @@
-import React, { useContext } from "react";
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "../../api/user.api.js";
-import assets from "../../assets/assets.js";
 import {
   FaChartLine,
   FaPiggyBank,
@@ -12,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { MdTrendingUp, MdCategory } from "react-icons/md";
 import { toast } from "react-toastify";
+import FinanceVisual from "../../components/ui/FinanceVisual.jsx";
 
 function Home() {
   const navigate = useNavigate();
@@ -108,32 +107,6 @@ function Home() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 overflow-y-auto">
-      {/* Header/Navigation */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200">
-        <div className="px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-myGreenMD to-myGreenSM rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">X</span>
-            </div>
-            <span className="text-lg font-bold text-gray-900">XseTrack</span>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/authentication/login")}
-              className="px-6 py-2.5 text-myGreenMD font-semibold border-2 border-myGreenMD rounded-lg hover:bg-myGreenMD/5 transition-all active:scale-95"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => navigate("/authentication/register")}
-              className="px-6 py-2.5 bg-gradient-to-r from-myGreenMD to-myGreenSM text-white font-semibold rounded-lg hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
-            >
-              Sign Up
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="px-8 py-12">
         {/* Hero Section */}
@@ -197,14 +170,7 @@ function Home() {
             </div>
 
             {/* Right Image */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-myGreenMD/20 to-myGreenSM/20 rounded-3xl blur-3xl"></div>
-              <img
-                src={assets.displayBg}
-                alt="Dashboard Preview"
-                className="relative rounded-3xl shadow-2xl object-cover w-full h-80"
-              />
-            </div>
+            <FinanceVisual />
           </div>
         </div>
 
