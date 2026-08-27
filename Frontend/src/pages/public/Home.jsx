@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "../../api/user.api.js";
+import Loading from "../../components/ui/loading.jsx";
 import {
   FaChartLine,
   FaPiggyBank,
@@ -15,19 +16,16 @@ import FinanceVisual from "../../components/ui/FinanceVisual.jsx";
 function Home() {
   const navigate = useNavigate();
 
-  const { data, isPending, error } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getUser,
     retry: false,
-    onSuccess: (data) => {
-      navigate("/dashboard");
-      toast.success(`Welcome back, ${data.fullname.split(" ")[0]}!`);
-    },
-    onError: (error) => {
-      if (error?.status !== 401)
-        toast.error("An error occurred while checking authentication");
-    },
   });
+
+  if (data) {
+    navigate("/dashboard");
+    toast.success(`Welcome back, ${data?.user?.username}!`);
+  }
 
   const features = [
     {
@@ -104,7 +102,9 @@ function Home() {
     },
   ];
 
-  return (
+  return isPending ? (
+    <Loading />
+  ) : (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 overflow-y-auto">
       {/* Main Content */}
       <div className="px-8 py-12">

@@ -1,17 +1,17 @@
 import axios from "axios";
-import { useNavigate } from "react-router";
+import { router } from "../main";
 
-const API = axios.create({
+const api = axios.create({
   baseURL: "http://localhost:4000/api",
   withCredentials: true,
 });
 
-const authAPI = axios.create({
+const authApi = axios.create({
   baseURL: "http://localhost:4000/api",
   withCredentials: true,
 });
 
-API.interceptors.response.use(
+api.interceptors.response.use(
   (response) => response,
 
   async (error) => {
@@ -21,12 +21,10 @@ API.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await authAPI.post("/users/refresh-tokens");
-
-        return API(originalRequest);
+        await authApi.post("/users/refresh-tokens");
+        return api(originalRequest);
       } catch {
-        const navigate = useNavigate();
-        navigate("/authentication/login");
+        router.navigate("/");
       }
     }
 
@@ -34,4 +32,4 @@ API.interceptors.response.use(
   },
 );
 
-export default API;
+export default api;

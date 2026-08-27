@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import OtpForm from "../../components/auth/OtpForm";
 import Loading from "../../components/ui/loading";
+import { verifyUser } from "../../api/user.api";
 
 function EmailVerification() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -11,10 +12,7 @@ function EmailVerification() {
   const inputRefs = useRef([]);
 
   const { isPending, mutate } = useMutation({
-    mutationFn: async (otpCode) => {
-      // Replace with your actual verification API endpoint
-      return { success: true, message: "Email verified successfully" };
-    },
+    mutationFn: verifyUser,
     onSuccess: (data) => {
       toast.success(data.message);
       navigate("/dashboard");
@@ -53,7 +51,7 @@ function EmailVerification() {
       toast.error("Please enter all 6 digits");
       return;
     }
-    mutate(otpCode);
+    mutate({ clientOtp: otpCode });
   };
 
   const handleResend = () => {

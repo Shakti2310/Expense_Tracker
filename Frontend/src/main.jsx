@@ -24,7 +24,7 @@ import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 
 const queryClient = new QueryClient();
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     Component: PublicLayout,
     children: [

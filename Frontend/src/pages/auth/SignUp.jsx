@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
@@ -8,6 +8,8 @@ import SignUpForm from "../../components/auth/SignUpForm.jsx";
 import signUpSchema from "../../schemas/signUp.schema.js";
 
 function SignUp() {
+  const navigate = useNavigate();
+
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
