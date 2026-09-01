@@ -103,7 +103,7 @@ function Home() {
   ];
 
   return isPending ? (
-    <Loading />
+    <Loading text="Loading..." />
   ) : (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 overflow-y-auto">
       {/* Main Content */}

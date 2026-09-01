@@ -61,7 +61,7 @@ function EmailVerification() {
   };
 
   return isPending ? (
-    <Loading />
+    <Loading text="Verifying your email..." />
   ) : (
     <OtpForm
       otp={otp}

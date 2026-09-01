@@ -53,7 +53,7 @@ function SignIn() {
   };
 
   return isPending ? (
-    <Loading />
+    <Loading text="Signing in..." />
   ) : (
     <SignInForm
       username={username}

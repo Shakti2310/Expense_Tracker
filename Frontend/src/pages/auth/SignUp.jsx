@@ -64,7 +64,7 @@ function SignUp() {
   };
 
   return isPending ? (
-    <Loading />
+    <Loading text="Signing up..." />
   ) : (
     <SignUpForm
       fullname={fullname}
