@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import OtpForm from "../../components/auth/OtpForm";
 import Loading from "../../components/ui/loading";
-import { verifyUser } from "../../api/user.api";
+import { verifyUser, resendOtp } from "../../api/user.api";
 
 function EmailVerification() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -19,6 +19,13 @@ function EmailVerification() {
     },
     onError: (error) => {
       toast.error("Invalid OTP. Please try again.");
+    },
+  });
+
+  const {mutate: resendOtpMutation} = useMutation({
+    mutationFn: resendOtp,
+    onSuccess: (data) => {
+      toast.info(data.message);
     },
   });
 
@@ -55,6 +62,7 @@ function EmailVerification() {
   };
 
   const handleResend = () => {
+    resendOtpMutation();
     toast.info("OTP resent to your email");
     setOtp(["", "", "", "", "", ""]);
     inputRefs.current[0]?.focus();
