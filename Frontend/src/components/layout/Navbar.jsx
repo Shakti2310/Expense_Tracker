@@ -1,5 +1,4 @@
 import { NavLink, useNavigate } from "react-router";
-import assets from "../../assets/assets.js";
 import { Moon, Sun } from "lucide-react";
 import useTheme from "../../hooks/useTheme.js";
 
@@ -8,9 +7,8 @@ function Navbar() {
   const { theme, toggleTheme } = useTheme();
   return (
     <div className="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
-      <div className="px-8 py-4 flex justify-between items-center">
+      <div className="px-8 py-4 flex justify-around items-center">
         <NavLink to="/" className="flex items-center gap-2">
-          <img src={assets.logo} alt="logo" className="w-8 h-8" />
           <span className="text-lg font-bold text-gray-900 dark:text-white">XseTrack</span>
         </NavLink>
         <div className="flex gap-10 text-gray-700 dark:text-white font-semibold items-center">

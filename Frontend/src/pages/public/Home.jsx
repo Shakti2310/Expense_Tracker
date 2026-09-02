@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "../../api/user.api.js";
-import Loading from "../../components/ui/loading.jsx";
+import Loader from "../../components/customUI/Loader.jsx";
 import {
   FaChartLine,
   FaPiggyBank,
@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import { MdTrendingUp, MdCategory } from "react-icons/md";
 import { toast } from "react-toastify";
-import FinanceVisual from "../../components/ui/FinanceVisual.jsx";
+import FinanceVisual from "../../components/customUI/FinanceVisual.jsx";
 
 function Home() {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ function Home() {
   ];
 
   return isPending ? (
-    <Loading text="Loading..." />
+    <Loader text="Loading..." />
   ) : (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 overflow-y-auto">
       {/* Main Content */}

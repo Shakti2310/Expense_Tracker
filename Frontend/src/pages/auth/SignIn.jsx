@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import Loading from "../../components/ui/loading.jsx";
+import Loader from "../../components/customUI/Loader.jsx";
 import signInSchema from "../../schemas/signIn.schema.js";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -53,7 +53,7 @@ function SignIn() {
   };
 
   return isPending ? (
-    <Loading text="Signing in..." />
+    <Loader text="Signing in..." />
   ) : (
     <SignInForm
       username={username}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import OtpForm from "../../components/auth/OtpForm";
-import Loading from "../../components/ui/loading";
+import Loader from "../../components/customUI/Loader/";
 import { verifyUser, resendOtp } from "../../api/user.api";
 
 function EmailVerification() {
@@ -69,7 +69,7 @@ function EmailVerification() {
   };
 
   return isPending ? (
-    <Loading text="Verifying your email..." />
+    <Loader text="Verifying your email..." />
   ) : (
     <OtpForm
       otp={otp}

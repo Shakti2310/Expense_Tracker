@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../../api/user.api.js";
-import Loading from "../../components/ui/loading.jsx";
+import Loader from "../../components/customUI/Loader.jsx";
 import SignUpForm from "../../components/auth/SignUpForm.jsx";
 import signUpSchema from "../../schemas/signUp.schema.js";
 
@@ -64,7 +64,7 @@ function SignUp() {
   };
 
   return isPending ? (
-    <Loading text="Signing up..." />
+    <Loader text="Signing up..." />
   ) : (
     <SignUpForm
       fullname={fullname}
