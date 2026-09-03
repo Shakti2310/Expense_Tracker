@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router";
 
 import assets from "../assets/assets";
+import Logo from "@/components/customUI/Logo";
 
 function AuthLayout() {
   const location = useLocation();
@@ -25,10 +26,7 @@ function AuthLayout() {
             )}
           </div>
           <div className="flex items-center justify-center gap-2">
-            <img src={assets.logo} alt="XseTrack logo" className="h-8 w-8" />
-            <span className="text-xl font-bold text-slate-900 dark:text-white">
-              Xse<span className="text-blue-500 dark:text-blue-400">Track</span>
-            </span>
+            <Logo size="text-2xl" />
           </div>
           <h1 className="text-3xl font-bold font-poppins mt-4 dark:text-white">
             {location.pathname === "/authentication/login"

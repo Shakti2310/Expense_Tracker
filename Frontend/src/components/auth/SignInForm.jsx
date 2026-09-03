@@ -2,6 +2,7 @@ import React from "react";
 import assets from "../../assets/assets.js";
 import { NavLink } from "react-router";
 import { FiAtSign, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import Logo from "../customUI/Logo.jsx";
 
 function SignInForm({
   username,
@@ -14,16 +15,12 @@ function SignInForm({
 }) {
   return (
     <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-slate-200 dark:border-gray-700 shadow-sm p-8 text-sm">
-      {/* Logo */}
       <div className="flex items-center justify-center gap-2">
-        <img src={assets.logo} alt="NexusTech logo" className="h-8 w-8" />
-        <span className="text-xl font-bold text-slate-900 dark:text-white">
-          Xse<span className="text-blue-500 dark:text-blue-400">Track</span>
-        </span>
+        <Logo size="text-2xl" />
       </div>
 
       <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white mt-2">
-        Sign In to XseTrack
+        Sign In to your account
       </h1>
       <p className="text-center text-slate-500 dark:text-gray-400 mt-1 mb-4">
         New to XseTrack?{" "}

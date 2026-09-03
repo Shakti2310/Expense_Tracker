@@ -10,6 +10,7 @@ import {
   FiEye,
   FiEyeOff,
 } from "react-icons/fi";
+import Logo from "../customUI/Logo.jsx";
 
 function SignUpForm({
   fullname,
@@ -30,12 +31,8 @@ function SignUpForm({
 }) {
   return (
     <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-slate-200 dark:border-gray-700 shadow-sm p-8 text-xs">
-      {/* Logo */}
       <div className="flex items-center justify-center gap-2">
-        <img src={assets.logo} alt="XseTrack logo" className="h-8 w-8" />
-        <span className="text-xl font-bold text-slate-900 dark:text-white">
-          Xse<span className="text-blue-500 dark:text-blue-400">Track</span>
-        </span>
+        <Logo size="text-2xl" />
       </div>
 
       <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white mt-2">
