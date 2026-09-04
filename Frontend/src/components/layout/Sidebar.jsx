@@ -119,18 +119,6 @@ function Sidebar() {
           </div>
         </nav>
 
-        {/* Other Section */}
-        <nav className="p-0 mb-6">
-          <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-5 pt-3 pb-2 m-0">
-            Settings & Info
-          </h3>
-          <div className="flex flex-col gap-0.5 px-2">
-            {otherItems.map((item) => (
-              <NavItem key={item.to} {...item} />
-            ))}
-          </div>
-        </nav>
-
         {/* Support Card */}
         <div className="mx-4 px-4 py-4 bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-500/10 dark:to-blue-500/10 border border-green-100/50 dark:border-green-500/20 rounded-xl text-center transition-all hover:border-green-300/50 dark:hover:border-green-500/30 hover:from-green-100/40 hover:to-green-50 dark:hover:from-green-500/15 dark:hover:to-green-500/10">
           <div className="text-2xl mb-2">💡</div>
