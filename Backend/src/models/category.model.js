@@ -6,23 +6,27 @@ const categorySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       default: null,
+      index: true,
     },
     name: {
       type: String,
       required: true,
       trim: true,
-      unique: true,
     },
     icon: {
       type: String,
     },
-    isDefault: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
   },
   { timestamps: true },
+);
+
+categorySchema.index(
+  { userId: 1, name: 1 },
+  { unique: true, partialFilterExpression: { userId: { $exists: true } } },
+);
+categorySchema.index(
+  { name: 1 },
+  { unique: true, partialFilterExpression: { userId: { $exists: false } } },
 );
 
 const Category = mongoose.model("Category", categorySchema);
