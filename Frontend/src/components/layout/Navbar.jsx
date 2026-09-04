@@ -1,25 +1,17 @@
-import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import useTheme from "../../hooks/useTheme.js";
 import SideMenuMobile from "./SideMenuMobile.jsx";
+import Logo from "../customUI/Logo.jsx";
 
 function Navbar() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
 
   const navItems = [
     { label: "About", to: "/about" },
     { label: "Contact Us", to: "/contact" },
   ];
-
-  const closeMenu = () => setIsMenuOpen(false);
-
-  const navigateTo = (path) => {
-    closeMenu();
-    navigate(path);
-  };
 
   const linkClassName = ({ isActive }) =>
     `rounded-lg px-3 py-2 transition-colors ${
@@ -33,11 +25,7 @@ function Navbar() {
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 justify-center">
           <SideMenuMobile />
-          <NavLink to="/" onClick={closeMenu} aria-label="XseTrack home">
-            <div className="font-poppins text-xl font-bold tracking-tight text-gray-900 transition-opacity hover:opacity-80 dark:text-white sm:text-2xl">
-              XseTrack
-            </div>
-          </NavLink>
+          <Logo />
         </div>
 
         <nav className=" flex items-center gap-1" aria-label="Main navigation">
@@ -59,13 +47,13 @@ function Navbar() {
 
         <div className="hidden items-center gap-2 md:flex">
           <button
-            onClick={() => navigateTo("/authentication/login")}
+            onClick={() => navigate("/authentication/login")}
             className="cursor-pointer rounded-lg px-3 py-2 font-semibold text-myGreenMD transition-colors hover:bg-myGreenMD/10 dark:text-myGreenSM dark:hover:bg-myGreenSM/10"
           >
             Sign In
           </button>
           <button
-            onClick={() => navigateTo("/authentication/register")}
+            onClick={() => navigate("/authentication/register")}
             className="cursor-pointer rounded-full bg-gradient-to-r from-myGreenMD to-myGreenSM px-5 py-2.5 font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
           >
             Sign Up
