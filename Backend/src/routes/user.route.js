@@ -20,10 +20,12 @@ router
   .route("/register")
   .post(upload.fields([{ name: "defaultPicture", maxCount: 1 }]), registerUser);
 router.route("/login").post(loginUser);
+
+//Protected Routes
 router.route("/logout").post(verifyAccessToken, logoutUser);
 router.route("/refresh-tokens").post(regenerateAccessToken);
 router.route("/verify-email").post(verifyEmailToken, verifyUser);
-router.route("/resend-otp").post(verifyEmailToken,resendOtp);
+router.route("/resend-otp").post(verifyEmailToken, resendOtp);
 router.route("/current-user").get(verifyAccessToken, getCurrentUser);
 
 export default router;
