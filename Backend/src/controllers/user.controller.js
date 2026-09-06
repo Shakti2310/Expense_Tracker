@@ -25,47 +25,49 @@ const registerUser = asyncHandler(async (req, res) => {
   const dpLocalPath = req.files?.defaultPicture?.[0]?.path;
 
   // Checking any data is missing or not
-  if ([username, fullname, email, password].some((item) => !item?.trim()))
-    throw new ApiError(400, "Details missing");
+  try {
+    if ([username, fullname, email, password].some((item) => !item?.trim()))
+      throw new ApiError(400, "Details missing");
 
-  // Checking for picture is provided or not
-  if (!dpLocalPath) throw new ApiError(400, "Picture not found");
+    // Checking for picture is provided or not
+    if (!dpLocalPath) throw new ApiError(400, "Picture not found");
 
-  // Finding user if already existed
-  const existedUser = await User.findOne({ $or: [{ username }, { email }] });
+    // Finding user if already existed
+    const existedUser = await User.findOne({ $or: [{ username }, { email }] });
 
-  // Throwing error if user is existed already
-  if (existedUser) throw new ApiError(409, "User already existed");
+    // Throwing error if user is existed already
+    if (existedUser) throw new ApiError(409, "User already existed");
 
-  // Uploading dp to Cloudinary
-  const defaultPicture = await cloudinary.uploader.upload(dpLocalPath, {
-    resource_type: "auto",
-  });
+    // Uploading dp to Cloudinary
+    const defaultPicture = await cloudinary.uploader.upload(dpLocalPath, {
+      resource_type: "auto",
+    });
 
-  // Checking does it uploaded or not
-  if (!defaultPicture) throw new ApiError(500, "Cloudinary upload error");
+    // Checking does it uploaded or not
+    if (!defaultPicture) throw new ApiError(500, "Cloudinary upload error");
 
-  const user = await User.create({
-    username: username.trim().toLowerCase(),
-    role: "user",
-    fullname,
-    email,
-    password,
-    defaultPicture: defaultPicture.url,
-  });
+    const user = await User.create({
+      username: username.trim().toLowerCase(),
+      role: "user",
+      fullname,
+      email,
+      password,
+      defaultPicture: defaultPicture.url,
+    });
 
-  const verificationToken = await initiateEmailVerification(user);
+    const verificationToken = await initiateEmailVerification(user);
 
-  if (!verificationToken)
-    throw new ApiError(500, "Verification token not generated");
+    if (!verificationToken)
+      throw new ApiError(500, "Verification token not generated");
 
-  if (dpLocalPath && fs.existsSync(dpLocalPath)) fs.unlinkSync(dpLocalPath);
-
-  // Sending the response and status code
-  return res
-    .status(201)
-    .cookie("verificationToken", verificationToken, cookieOptions1d)
-    .json(new ApiResponse(200, "User registered successfully", user));
+    // Sending the response and status code
+    return res
+      .status(201)
+      .cookie("verificationToken", verificationToken, cookieOptions1d)
+      .json(new ApiResponse(200, "User registered successfully", user));
+  } finally {
+    if (dpLocalPath && fs.existsSync(dpLocalPath)) fs.unlinkSync(dpLocalPath);
+  }
 });
 
 const loginUser = asyncHandler(async (req, res) => {

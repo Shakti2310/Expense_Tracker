@@ -21,44 +21,35 @@ const addCategory = asyncHandler(async (req, res) => {
 
   const iconLocalPath = req.files?.icon?.[0]?.path;
 
-  const existedCategory = await Category.find({
-    userId: req.user._id,
-    name: name,
-  });
-  if (!existedCategory) throw new ApiError(409, "Category already exists");
-
-  if (iconLocalPath) {
-    const icon = await cloudinary.uploader.upload(iconLocalPath, {
-      resource_type: "auto",
+  try {
+    const existedCategory = await Category.findOne({
+      userId: req.user._id,
+      name: name,
     });
-    if (!icon) throw new ApiError(500, "Cloudinary upload failed");
+    if (existedCategory) throw new ApiError(409, "Category already exists");
 
-    const category = await Category.create({
+    const categoryData = {
       userId: req.user._id,
       name: name.trim(),
-      icon: icon.url,
-    });
-    if (!category) throw new ApiError(500, "Category not created");
+    };
 
-    if (iconLocalPath && fs.existsSync(iconLocalPath))
-      fs.unlinkSync(iconLocalPath);
+    if (iconLocalPath) {
+      const icon = await cloudinary.uploader.upload(iconLocalPath, {
+        resource_type: "auto",
+      });
+      if (!icon) throw new ApiError(500, "Cloudinary upload failed");
+
+      categoryData.icon = icon.url;
+    }
+    const category = await Category.create(categoryData);
+    if (!category) throw new ApiError(500, "Category not created");
 
     return res
       .status(201)
       .json(new ApiResponse(201, "Category is created", category));
-  } else {
-    const category = await Category.create({
-      userId: req.user._id,
-      name: name.trim(),
-    });
-    if (!category) throw new ApiError(500, "Category not created");
-
+  } finally {
     if (iconLocalPath && fs.existsSync(iconLocalPath))
       fs.unlinkSync(iconLocalPath);
-
-    return res
-      .status(201)
-      .json(new ApiResponse(201, "Category is created", category));
   }
 });
 
