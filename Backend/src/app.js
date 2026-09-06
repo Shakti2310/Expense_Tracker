@@ -26,10 +26,15 @@ app.use(cookieParser());
 
 //routes import
 import userRouter from "./routes/user.route.js";
+import categoryRouter from "./routes/category.route.js";
+import errorHandler from "./middlewares/error.middleware.js";
 
 //routes declaration
-app.use("/api/users", userRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 app.get("/", (_, res) => res.send("server running"));
+
+app.use(errorHandler);
 
 export default app;
