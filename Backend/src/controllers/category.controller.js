@@ -9,7 +9,7 @@ import fs from "fs";
 
 const getAllCategories = asyncHandler(async (req, res) => {
   const category = await Category.find({ userId: req.user._id });
-  if (!category)
+  if (category.length === 0)
     throw new ApiError(400, "User do not have any custom category");
 
   return res.json(new ApiResponse(200, "All categories", category));
@@ -57,7 +57,7 @@ const getCategory = asyncHandler(async (req, res) => {
   const _id = req.params.id;
   if (!_id) throw new ApiError(400, "id not found");
 
-  const category = await Category.findById(_id);
+  const category = await Category.findOne({ _id: _id, userId: req.user._id });
   if (!category) throw new ApiError(404, "Category does not exists");
 
   return res
@@ -73,11 +73,11 @@ const updateCategory = asyncHandler(async (req, res) => {
   if (!_id) throw new ApiError(400, "id not found");
 
   const updatedCategory = await Category.findOneAndUpdate(
-    { _id: _id },
+    { _id: _id, userId: req.user._id },
     { $set: { name: name } },
     { returnDocument: "after" },
   );
-  if (!updateCategory) throw new ApiError(404, "Category does not exists");
+  if (!updatedCategory) throw new ApiError(404, "Category does not exists");
 
   res
     .status(200)
@@ -88,7 +88,10 @@ const deleteCategory = asyncHandler(async (req, res) => {
   const _id = req.params.id;
   if (!_id) throw new ApiError(400, "id not found");
 
-  const deletedCategory = await Category.findByIdAndDelete(_id);
+  const deletedCategory = await Category.findOneAndDelete({
+    _id: _id,
+    userId: req.user._id,
+  });
   if (!deletedCategory) throw new ApiError(400, "Category does not exists");
 
   res.status(200).json(new ApiResponse(200, "category deleted"));
@@ -96,9 +99,9 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
 const deleteAllCategories = asyncHandler(async (req, res) => {
   const result = await Category.deleteMany({ userId: req.user._id });
-  if (!result) throw new ApiError(400, "User do not have any custom category");
+  if (!result.deletedCount) throw new ApiError(400, "User do not have any custom category");
 
-  res.status(200).json(200, "All categories deleted");
+  res.status(200).json(new ApiResponse(200, "All categories deleted"));
 });
 
 export {
