@@ -27,6 +27,11 @@ const errorHandler = (err, req, res, next) => {
     error = new ApiError(409, "Duplicate value error");
   }
 
+  // MongoDB invalid :id param handler
+  else if (err.name === "CastError") {
+    error = new ApiError(400, `Invalid ${err.path}: ${err.value}`);
+  }
+
   const statusCode = error.statusCode || 500;
 
   return res.status(statusCode).json({
