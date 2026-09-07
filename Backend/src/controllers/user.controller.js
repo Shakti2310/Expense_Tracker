@@ -24,11 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // Getting the user picture from client
   const dpLocalPath = req.files?.defaultPicture?.[0]?.path;
 
-  // Checking any data is missing or not
   try {
-    if ([username, fullname, email, password].some((item) => !item?.trim()))
-      throw new ApiError(400, "Details missing");
-
     // Checking for picture is provided or not
     if (!dpLocalPath) throw new ApiError(400, "Picture not found");
 
@@ -74,10 +70,6 @@ const loginUser = asyncHandler(async (req, res) => {
   // Getting login details from user
   const { username, password } = req.body;
 
-  // Checking data missing or not
-  if (!username || !password)
-    throw new ApiError(400, "username and password are required");
-
   // Finding user instance in database
   const user = await User.findOne(
     { username },
@@ -91,7 +83,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const isPasswordValid = await user.verifyPassword(password);
 
   // Error if password is wrong
-  if (!isPasswordValid) throw new ApiError(401, "Invalid password");
+  if (!isPasswordValid) throw new ApiError(401, "Wrong password");
 
   // Verification Check
   if (!user.isVerified) {
@@ -154,8 +146,6 @@ const regenerateAccessToken = asyncHandler(async (req, res) => {
 
 const verifyUser = asyncHandler(async (req, res) => {
   const { clientOtp } = req.body;
-
-  if (!clientOtp) throw new ApiError(400, "Otp is required");
 
   const email = req.user?.email;
 
