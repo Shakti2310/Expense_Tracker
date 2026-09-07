@@ -2,8 +2,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const createUploader = ({ folder, allowedTypes, maxSizeMB }) => {
-  // ensure the destination folder exists
+const createUploader = ({ folder, allowedTypes, allowedExtensions, maxSizeMB }) => {
   const uploadPath = `./public/uploads/${folder}`;
   if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath, { recursive: true });
@@ -18,12 +17,19 @@ const createUploader = ({ folder, allowedTypes, maxSizeMB }) => {
   });
 
   const fileFilter = (req, file, cb) => {
-    if (!allowedTypes.includes(file.mimetype)) {
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    const mimetypeOk = allowedTypes.includes(file.mimetype);
+    const extensionOk = allowedExtensions.includes(ext);
+
+    // accept if EITHER check passes — covers the octet-stream edge case
+    if (!mimetypeOk && !extensionOk) {
       return cb(
-        new Error(`Only ${allowedTypes.join(", ")} files are allowed`),
+        new Error(`Only ${allowedExtensions.join(", ")} files are allowed`),
         false,
       );
     }
+
     cb(null, true);
   };
 
@@ -37,12 +43,14 @@ const createUploader = ({ folder, allowedTypes, maxSizeMB }) => {
 const uploadUserPicture = createUploader({
   folder: "users",
   allowedTypes: ["image/png", "image/jpeg", "image/webp"],
+  allowedExtensions: [".png", ".jpg", ".jpeg", ".webp"],
   maxSizeMB: 5,
 });
 
 const uploadCategoryIcon = createUploader({
   folder: "categories",
   allowedTypes: ["image/png", "image/jpeg", "image/svg+xml"],
+  allowedExtensions: [".png", ".jpg", ".jpeg", ".svg"],
   maxSizeMB: 1,
 });
 
