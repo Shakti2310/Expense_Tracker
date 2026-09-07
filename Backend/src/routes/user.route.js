@@ -8,7 +8,7 @@ import {
   verifyUser,
 } from "../controllers/user.controller.js";
 import { resendOtp } from "../controllers/otp.controller.js";
-import { upload } from "../middlewares/multer.middleware.js";
+import { uploadUserPicture } from "../middlewares/multer.middleware.js";
 import {
   verifyAccessToken,
   verifyEmailToken,
@@ -18,7 +18,7 @@ const router = Router();
 
 router
   .route("/register")
-  .post(upload.fields([{ name: "defaultPicture", maxCount: 1 }]), registerUser);
+  .post(uploadUserPicture.single("defaultPicture"), registerUser);
 router.route("/login").post(loginUser);
 
 //Protected Routes

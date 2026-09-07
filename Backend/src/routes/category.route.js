@@ -8,18 +8,14 @@ import {
   deleteCategory,
   deleteAllCategories,
 } from "../controllers/category.controller.js";
-import { upload } from "../middlewares/multer.middleware.js";
+import { uploadCategoryIcon } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
 router
   .route("/")
   .get(verifyAccessToken, getAllCategories)
-  .post(
-    verifyAccessToken,
-    upload.fields([{ name: "icon", maxCount: 1 }]),
-    addCategory,
-  )
+  .post(verifyAccessToken, uploadCategoryIcon.single("icon"), addCategory)
   .delete(verifyAccessToken, deleteAllCategories);
 
 router
