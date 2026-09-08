@@ -9,19 +9,29 @@ import {
   deleteAllCategories,
 } from "../controllers/category.controller.js";
 import { uploadCategoryIcon } from "../middlewares/multer.middleware.js";
+import validate from "../middlewares/validation.middleware.js";
+import {
+  createCategorySchema,
+  updateCategorySchema,
+} from "../validations/category.validation.js";
 
 const router = Router();
 
 router
   .route("/")
   .get(verifyAccessToken, getAllCategories)
-  .post(verifyAccessToken, uploadCategoryIcon.single("icon"), addCategory)
+  .post(
+    verifyAccessToken,
+    uploadCategoryIcon.single("icon"),
+    validate(createCategorySchema),
+    addCategory,
+  )
   .delete(verifyAccessToken, deleteAllCategories);
 
 router
   .route("/:id")
   .get(verifyAccessToken, getCategory)
-  .patch(verifyAccessToken, updateCategory)
+  .patch(verifyAccessToken, validate(updateCategorySchema), updateCategory)
   .delete(verifyAccessToken, deleteCategory);
 
 export default router;

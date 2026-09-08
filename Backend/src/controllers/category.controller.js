@@ -17,7 +17,6 @@ const getAllCategories = asyncHandler(async (req, res) => {
 
 const addCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
-  if (!name) throw new ApiError(400, "Name is missing");
 
   const iconLocalPath = req.files?.icon?.[0]?.path;
 
@@ -67,10 +66,19 @@ const getCategory = asyncHandler(async (req, res) => {
 
 const updateCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
-  if (!name) throw new ApiError(400, "New name not found");
 
   const _id = req.params.id;
   if (!_id) throw new ApiError(400, "id not found");
+
+  const existedCategory = await Category.findOne({
+    userId: req.user._id,
+    name: name,
+  });
+  
+  if (existedCategory._id.toString() === _id)
+    throw new ApiError(409, "Name is similar to existing category");
+  else if (existedCategory)
+    throw new ApiError(409, "Category with this name already exists");
 
   const updatedCategory = await Category.findOneAndUpdate(
     { _id: _id, userId: req.user._id },
@@ -99,7 +107,8 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
 const deleteAllCategories = asyncHandler(async (req, res) => {
   const result = await Category.deleteMany({ userId: req.user._id });
-  if (!result.deletedCount) throw new ApiError(400, "User do not have any custom category");
+  if (!result.deletedCount)
+    throw new ApiError(400, "User do not have any custom category");
 
   res.status(200).json(new ApiResponse(200, "All categories deleted"));
 });
