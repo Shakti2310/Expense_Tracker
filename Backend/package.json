@@ -18,7 +18,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.2",
     "multer": "^2.1.0",
-    "nodemailer": "^8.0.10"
+    "nodemailer": "^8.0.10",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "dotenv": "^17.3.1",
