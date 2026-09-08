@@ -18,7 +18,7 @@ const getAllCategories = asyncHandler(async (req, res) => {
 const addCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
 
-  const iconLocalPath = req.files?.icon?.[0]?.path;
+  const iconLocalPath = req.file?.path;
 
   try {
     const existedCategory = await Category.findOne({
