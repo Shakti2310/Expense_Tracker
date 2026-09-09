@@ -8,7 +8,9 @@ import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
 const getAllCategories = asyncHandler(async (req, res) => {
-  const category = await Category.find({ userId: req.user._id });
+  const category = await Category.find({
+    $or: [{ userId: req.user._id }, { userId: null }],
+  });
   if (category.length === 0)
     throw new ApiError(400, "User do not have any custom category");
 
@@ -74,7 +76,7 @@ const updateCategory = asyncHandler(async (req, res) => {
     userId: req.user._id,
     name: name,
   });
-  
+
   if (existedCategory._id.toString() === _id)
     throw new ApiError(409, "Name is similar to existing category");
   else if (existedCategory)
@@ -105,13 +107,6 @@ const deleteCategory = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "category deleted"));
 });
 
-const deleteAllCategories = asyncHandler(async (req, res) => {
-  const result = await Category.deleteMany({ userId: req.user._id });
-  if (!result.deletedCount)
-    throw new ApiError(400, "User do not have any custom category");
-
-  res.status(200).json(new ApiResponse(200, "All categories deleted"));
-});
 
 export {
   getAllCategories,
@@ -119,5 +114,4 @@ export {
   getCategory,
   updateCategory,
   deleteCategory,
-  deleteAllCategories,
 };

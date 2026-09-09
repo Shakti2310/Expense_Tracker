@@ -6,7 +6,6 @@ import {
   addCategory,
   updateCategory,
   deleteCategory,
-  deleteAllCategories,
 } from "../controllers/category.controller.js";
 import { uploadCategoryIcon } from "../middlewares/multer.middleware.js";
 import validate from "../middlewares/validation.middleware.js";
@@ -25,8 +24,7 @@ router
     uploadCategoryIcon.single("icon"),
     validate(createCategorySchema),
     addCategory,
-  )
-  .delete(verifyAccessToken, deleteAllCategories);
+  );
 
 router
   .route("/:id")
