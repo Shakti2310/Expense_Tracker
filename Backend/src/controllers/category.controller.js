@@ -98,6 +98,16 @@ const deleteCategory = asyncHandler(async (req, res) => {
   const _id = req.params.id;
   if (!_id) throw new ApiError(400, "id not found");
 
+  const expenseCount = await Expense.countDocuments({
+    categoryId: _id,
+    userId: req.user._id,
+  });
+  if (expenseCount > 0)
+    throw new ApiError(
+      400,
+      "Category cannot be deleted as it is associated with expenses",
+    );
+
   const deletedCategory = await Category.findOneAndDelete({
     _id: _id,
     userId: req.user._id,
@@ -106,7 +116,6 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, "category deleted"));
 });
-
 
 export {
   getAllCategories,
