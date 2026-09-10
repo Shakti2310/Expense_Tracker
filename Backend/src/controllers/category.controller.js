@@ -24,8 +24,8 @@ const addCategory = asyncHandler(async (req, res) => {
 
   try {
     const existedCategory = await Category.findOne({
-      userId: req.user._id,
-      name: name,
+      name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" },
+      $or: [{ userId: req.user._id }, { userId: null }],
     });
     if (existedCategory) throw new ApiError(409, "Category already exists");
 
