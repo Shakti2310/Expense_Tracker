@@ -8,7 +8,7 @@ import {
   deleteCategory,
 } from "../controllers/category.controller.js";
 import { uploadCategoryIcon } from "../middlewares/multer.middleware.js";
-import validate from "../middlewares/validation.middleware.js";
+import {validateReqBody} from "../middlewares/validation.middleware.js";
 import {
   createCategorySchema,
   updateCategorySchema,
@@ -22,14 +22,14 @@ router
   .post(
     verifyAccessToken,
     uploadCategoryIcon.single("icon"),
-    validate(createCategorySchema),
+    validateReqBody(createCategorySchema),
     addCategory,
   );
 
 router
   .route("/:id")
   .get(verifyAccessToken, getCategory)
-  .patch(verifyAccessToken, validate(updateCategorySchema), updateCategory)
+  .patch(verifyAccessToken, validateReqBody(updateCategorySchema), updateCategory)
   .delete(verifyAccessToken, deleteCategory);
 
 export default router;
