@@ -6,7 +6,7 @@ const validateReqBody = (schema) => (req, _, next) => {
   if (!result.success) {
     throw new ApiError(
       400,
-      "Validation failed",
+      "Data Validation failed",
       result.error.flatten().fieldErrors,
     );
   }
@@ -15,4 +15,19 @@ const validateReqBody = (schema) => (req, _, next) => {
   next();
 };
 
-export { validateReqBody };
+const validateReqQuery = (schema) => (req, _, next) => {
+  const result = schema.safeParse(req.query);
+
+  if (!result.success) {
+    throw new ApiError(
+      400,
+      "Query Validation failed",
+      result.error.flatten().fieldErrors,
+    );
+  }
+
+  req.query = result.data;
+  next();
+};
+
+export { validateReqBody, validateReqQuery };
