@@ -1,10 +1,10 @@
 import { Outlet } from "react-router";
-import Navbar from "../components/layout/Navbar";
+import PublicNavbar from "../components/layout/public/PublicNavbar.jsx";
 
 function PublicLayout() {
   return (
     <>
-      <Navbar />
+      <PublicNavbar />
       <Outlet />
     </>
   );
