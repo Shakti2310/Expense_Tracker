@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
 import Category from "../models/category.model.js";
+import Expense from "../models/expense.model.js";
 
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
@@ -11,9 +12,6 @@ const getAllCategories = asyncHandler(async (req, res) => {
   const category = await Category.find({
     $or: [{ userId: req.user._id }, { userId: null }],
   });
-  if (category.length === 0)
-    throw new ApiError(400, "User do not have any custom category");
-
   return res.json(new ApiResponse(200, "All categories", category));
 });
 
@@ -24,7 +22,10 @@ const addCategory = asyncHandler(async (req, res) => {
 
   try {
     const existedCategory = await Category.findOne({
-      name: { $regex: name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" },
+      name: {
+        $regex: name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        $options: "i",
+      },
       $or: [{ userId: req.user._id }, { userId: null }],
     });
     if (existedCategory) throw new ApiError(409, "Category already exists");
@@ -56,7 +57,6 @@ const addCategory = asyncHandler(async (req, res) => {
 
 const getCategory = asyncHandler(async (req, res) => {
   const _id = req.params.id;
-  if (!_id) throw new ApiError(400, "id not found");
 
   const category = await Category.findOne({ _id: _id, userId: req.user._id });
   if (!category) throw new ApiError(404, "Category does not exists");
@@ -68,26 +68,29 @@ const getCategory = asyncHandler(async (req, res) => {
 
 const updateCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
-
   const _id = req.params.id;
-  if (!_id) throw new ApiError(400, "id not found");
 
-  const existedCategory = await Category.findOne({
-    userId: req.user._id,
-    name: name,
-  });
+  const category = await Category.findOne({ _id, userId: req.user._id });
+  if (!category) throw new ApiError(404, "Category does not exist");
 
-  if (existedCategory._id.toString() === _id)
-    throw new ApiError(409, "Name is similar to existing category");
-  else if (existedCategory)
-    throw new ApiError(409, "Category with this name already exists");
+  if (name && name.toLowerCase() !== category.name.toLowerCase()) {
+    const existedCategory = await Category.findOne({
+      _id: { $ne: _id },
+      name: {
+        $regex: `^${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+        $options: "i",
+      },
+      $or: [{ userId: req.user._id }, { userId: null }],
+    });
+    if (existedCategory)
+      throw new ApiError(409, "Category with this name already exists");
+  }
 
   const updatedCategory = await Category.findOneAndUpdate(
-    { _id: _id, userId: req.user._id },
-    { $set: { name: name } },
-    { returnDocument: "after" },
+    { _id, userId: req.user._id },
+    { $set: { name } },
+    { returnDocument: "after", runValidators: true },
   );
-  if (!updatedCategory) throw new ApiError(404, "Category does not exists");
 
   res
     .status(200)
@@ -96,7 +99,6 @@ const updateCategory = asyncHandler(async (req, res) => {
 
 const deleteCategory = asyncHandler(async (req, res) => {
   const _id = req.params.id;
-  if (!_id) throw new ApiError(400, "id not found");
 
   const expenseCount = await Expense.countDocuments({
     categoryId: _id,
