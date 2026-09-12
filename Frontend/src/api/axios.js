@@ -2,12 +2,12 @@ import axios from "axios";
 import { router } from "../main";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api",
+  baseURL: "http://localhost:4000/api/v1",
   withCredentials: true,
 });
 
 const authApi = axios.create({
-  baseURL: "http://localhost:4000/api",
+  baseURL: "http://localhost:4000/api/v1",
   withCredentials: true,
 });
 
