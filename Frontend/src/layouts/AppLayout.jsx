@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
 import { LoggingContext } from "../contexts/LoggingContext.jsx";
-import AppSidebar from "../components/layout/AppSidebar.jsx";
+import AppSidebar from "../components/layout/app/AppSidebar.jsx";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 function AppLayout() {
