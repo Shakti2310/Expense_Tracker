@@ -20,8 +20,13 @@ function CategoryGridSkeleton() {
 }
 
 function Categories() {
-  const { data: categories, isLoading, isError, refetch, isFetching } =
-    useCategories();
+  const {
+    data: categories,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useCategories();
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -41,7 +46,7 @@ function Categories() {
   const custom = categories?.filter((c) => c.userId !== null) ?? [];
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full px-4 py-6 sm:px-11 lg:px-11">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-poppins text-2xl font-bold text-gray-900 dark:text-white">
@@ -105,8 +110,8 @@ function Categories() {
                   No custom categories yet
                 </p>
                 <p className="max-w-xs text-sm text-muted-foreground">
-                  Create your first category to organize expenses that don't
-                  fit the defaults.
+                  Create your first category to organize expenses that don't fit
+                  the defaults.
                 </p>
                 <Button size="sm" onClick={openCreateForm}>
                   <Plus className="h-4 w-4" />
