@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ const NAV_ITEMS = [
 ];
 
 function AppSidebar() {
+  const { toggleSidebar } = useSidebar();
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="gap-3 border-b border-sidebar-border/60 pb-3">
@@ -49,7 +51,10 @@ function AppSidebar() {
                 tooltip="XseTrack"
                 className="gap-2.5 px-1.5 hover:bg-transparent active:bg-transparent group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:[&_svg]:size-5 group-data-[collapsible=icon]:p-3!"
               >
-                <ChartNoAxesCombined className="size-5 shrink-0 text-primary" />
+                <ChartNoAxesCombined
+                  className="size-5 shrink-0 text-primary"
+                  onClick={toggleSidebar}
+                />
                 <Logo
                   className="text-lg font-semibold tracking-tight group-data-[collapsible=icon]:hidden"
                   to="/dashboard"
@@ -60,7 +65,6 @@ function AppSidebar() {
 
           <SidebarTrigger className="size-8 shrink-0 rounded-lg border border-sidebar-border text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground group-data-[collapsible=icon]:hidden" />
         </div>
-
       </SidebarHeader>
 
       <SidebarContent className="gap-1 py-2">
@@ -89,7 +93,7 @@ function AppSidebar() {
                         <span>{label}</span>
                       </SidebarMenuButton>
                       {badge && (
-                        <SidebarMenuBadge className="bg-primary rounded-full px-1.5 dark:text-black ">
+                        <SidebarMenuBadge className="bg-primary rounded-full px-1.5 dark:text-black text-white">
                           {badge}
                         </SidebarMenuBadge>
                       )}

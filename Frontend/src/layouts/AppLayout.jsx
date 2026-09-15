@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Outlet } from "react-router";
 import { LoggingContext } from "../contexts/LoggingContext.jsx";
 import AppSidebar from "../components/layout/app/AppSidebar.jsx";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import AppNavbar from "@/components/layout/app/AppNavbar.jsx";
 
 function AppLayout() {
   const [isLogged, setIsLogged] = useState(true);
@@ -12,7 +13,7 @@ function AppLayout() {
         <LoggingContext.Provider value={setIsLogged}>
           <AppSidebar />
           <div className="w-full overflow-hidden bg-gray-100 dark:bg-gray-950">
-            <SidebarTrigger />
+            <AppNavbar />
             <Outlet />
           </div>
         </LoggingContext.Provider>
