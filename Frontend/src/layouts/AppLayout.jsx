@@ -12,7 +12,7 @@ function AppLayout() {
       <SidebarProvider>
         <LoggingContext.Provider value={setIsLogged}>
           <AppSidebar />
-          <div className="w-full overflow-hidden bg-gray-100 dark:bg-gray-950">
+          <div className="w-full bg-gray-100 dark:bg-black">
             <AppNavbar />
             <Outlet />
           </div>
