@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -12,15 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import { useCreateCategory, useUpdateCategory } from "../../hooks/useCategories.js";
-
-// Mirrors createCategorySchema on the backend — name is the only field
-// the client ever sends, icon/color are decided server-side.
-const nameSchema = z
-  .string()
-  .trim()
-  .min(2, "Category name must be at least 2 characters")
-  .max(25, "Category name must be under 25 characters");
+import {
+  useCreateCategory,
+  useUpdateCategory,
+} from "../../hooks/useCategories.js";
+import categorySchema from "@/validations/category.validation.js";
 
 function CategoryFormDialog({ open, onOpenChange, category = null }) {
   const isEditMode = Boolean(category);
@@ -43,18 +38,18 @@ function CategoryFormDialog({ open, onOpenChange, category = null }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const result = nameSchema.safeParse(name);
+    const result = categorySchema.safeParse({ name });
     if (!result.success) {
       setError(result.error.issues[0].message);
       return;
     }
     setError("");
 
-    const payload = { name: result.data };
+    const payload = result.data ;
 
     if (isEditMode) {
       updateCategory.mutate(
-        { id: category._id, payload },
+        { id: category._id, name: payload.name },
         { onSuccess: () => onOpenChange(false) },
       );
     } else {
