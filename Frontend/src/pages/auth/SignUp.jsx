@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../../api/user.api.js";
 import Loader from "../../components/customUI/Loader.jsx";
 import SignUpForm from "../../components/auth/SignUpForm.jsx";
-import signUpSchema from "../../schemas/signUp.schema.js";
+import { registerSchema } from "../../validations/user.validation.js";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ function SignUp() {
 
     // Validate form data using Zod schema
     try {
-      const result = signUpSchema.safeParse(formObject);
+      const result = registerSchema.safeParse(formObject);
       if (!result.success) {
         toast.error(result.error.issues[0].message);
         return;

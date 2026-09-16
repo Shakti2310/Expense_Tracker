@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import Loader from "../../components/customUI/Loader.jsx";
-import signInSchema from "../../schemas/signIn.schema.js";
+import { loginSchema } from "../../validations/user.validation.js";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { loginUser } from "../../api/user.api.js";
@@ -39,7 +39,7 @@ function SignIn() {
     };
 
     try {
-      const result = signInSchema.safeParse(formData);
+      const result = loginSchema.safeParse(formData);
       if (!result.success) {
         toast.error(result.error.issues[0].message);
         return;
