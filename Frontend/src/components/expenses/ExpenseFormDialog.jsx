@@ -13,22 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { useCreateExpense, useUpdateExpense } from "../../hooks/useExpenses.js";
-
-const expenseSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(2, "Title must be at least 2 characters")
-    .max(100),
-  amount: z.coerce.number().positive("Amount must be greater than 0"),
-  date: z.coerce.date("Date is required"),
-  categoryId: z.string().min(1, "Choose a category"),
-  description: z
-    .string()
-    .trim()
-    .max(500, "Description must be at most 500 characters"),
-  paymentMethod: z.enum(["cash", "upi", "card", "netbanking"]),
-});
+import { createExpenseSchema } from "@/validations/expense.validation.js";
 
 const paymentMethods = [
   ["cash", "Cash"],
@@ -87,7 +72,7 @@ function ExpenseFormDialog({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const result = expenseSchema.safeParse(form);
+    const result = createExpenseSchema.safeParse(form);
     if (!result.success) {
       setError(result.error.issues[0].message);
       return;
