@@ -63,7 +63,7 @@ function Categories() {
       </div>
 
       {isError && (
-        <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-gray-200 bg-white py-12 text-center dark:border-gray-800 dark:bg-gray-900">
+        <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-gray-200 bg-white py-12 text-center dark:border-sidebar-border dark:bg-sidebar">
           <p className="text-sm text-gray-900 dark:text-gray-100">
             Couldn't load your categories.
           </p>
@@ -102,7 +102,7 @@ function Categories() {
             </h2>
 
             {custom.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-gray-300 bg-white py-12 text-center dark:border-gray-700 dark:bg-gray-900">
+              <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-gray-300 bg-white py-12 text-center dark:border-sidebar-border dark:bg-sidebar">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                   <LayoutGrid className="h-5 w-5 text-primary" />
                 </div>

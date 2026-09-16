@@ -25,7 +25,7 @@ function CategoryCard({ category, onEdit, onDelete }) {
   const isPredefined = category.userId === null;
 
   return (
-    <div className="group flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-primary/40 dark:border-gray-800 dark:bg-gray-900">
+    <div className="group flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-primary/40 dark:border-sidebar-border dark:bg-sidebar">
       <div className="flex items-start justify-between gap-2">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
           <CategoryIcon icon={category.icon} />
@@ -34,7 +34,7 @@ function CategoryCard({ category, onEdit, onDelete }) {
         {isPredefined ? (
           <span
             title="Provided by XseTrack — can't be edited or removed"
-            className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-muted-foreground dark:bg-gray-800"
+            className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-muted-foreground dark:bg-sidebar"
           >
             <Lock className="h-3 w-3" />
             Default
