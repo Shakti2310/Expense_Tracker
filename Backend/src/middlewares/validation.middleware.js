@@ -26,7 +26,6 @@ const validateReqQuery = (schema) => (req, _, next) => {
     );
   }
 
-  req.query = result.data;
   next();
 };
 
