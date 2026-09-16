@@ -5,10 +5,10 @@ import AppNavbar from "@/components/layout/app/AppNavbar.jsx";
 
 function AppLayout() {
   return (
-    <div className="min-h-dvh font-nunito flex ">
+    <div className="font-nunito flex">
       <SidebarProvider>
           <AppSidebar />
-          <div className="w-full bg-gray-00 dark:bg-black">
+          <div className="h-dvh min-w-0 w-full overflow-y-auto bg-gray-100 scrollbar-none dark:bg-black">
             <AppNavbar />
             <Outlet />
           </div>
