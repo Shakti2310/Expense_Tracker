@@ -14,12 +14,14 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { useCreateExpense, useUpdateExpense } from "../../hooks/useExpenses.js";
 import { createExpenseSchema } from "@/validations/expense.validation.js";
+import SelectOptions from "../customUI/SelectOptions.jsx";
+import { DatePicker } from "../customUI/DatePicker.jsx";
 
-const paymentMethods = [
-  ["cash", "Cash"],
-  ["upi", "UPI"],
-  ["card", "Card"],
-  ["netbanking", "Net banking"],
+const paymentLabels = [
+  { label: "Cash", value: "cash" },
+  { label: "UPI", value: "upi" },
+  { label: "Card", value: "card" },
+  { label: "Net banking", value: "netbanking" },
 ];
 
 const emptyForm = {
@@ -93,6 +95,13 @@ function ExpenseFormDialog({
     }
   };
 
+  const categoriesOptions = [
+    ...categories.map((category) => ({
+      label: category.name,
+      value: category._id,
+    })),
+  ];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
@@ -134,46 +143,29 @@ function ExpenseFormDialog({
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="expense-date">Date</Label>
-              <Input
-                id="expense-date"
-                type="date"
-                max={new Date().toISOString().slice(0, 10)}
-                value={form.date}
-                onChange={(event) => setField("date", event.target.value)}
+              <DatePicker
+                date={form.date}
+                onChange={(value) => setField("date", value)}
               />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="expense-category">Category</Label>
-              <select
-                id="expense-category"
+              <SelectOptions
+                items={categoriesOptions}
+                id="category-options"
+                placeholder="Choose category"
                 value={form.categoryId}
-                onChange={(event) => setField("categoryId", event.target.value)}
-                className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
-              >
-                <option value="">Choose a category</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => setField("categoryId", value)}
+              />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="expense-payment">Payment method</Label>
-              <select
-                id="expense-payment"
+              <SelectOptions
+                id="payment-methods"
+                items={paymentLabels}
                 value={form.paymentMethod}
-                onChange={(event) =>
-                  setField("paymentMethod", event.target.value)
-                }
-                className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
-              >
-                {paymentMethods.map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => setField("paymentMethod", value)}
+              />
             </div>
             <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="expense-description">
