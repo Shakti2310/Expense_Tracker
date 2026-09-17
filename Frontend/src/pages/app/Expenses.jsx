@@ -20,6 +20,7 @@ import { useCategories } from "../../hooks/useCategories.js";
 import { useExpenses } from "../../hooks/useExpenses.js";
 import ExpenseFormDialog from "../../components/expenses/ExpenseFormDialog.jsx";
 import DeleteExpenseDialog from "../../components/expenses/DeleteExpenseDialog.jsx";
+import ExpenseDataDialog from "../../components/expenses/ExpenseDataDialog.jsx";
 import { DatePicker } from "@/components/customUI/DatePicker.jsx";
 import SelectOptions from "@/components/customUI/SelectOptions.jsx";
 
@@ -83,7 +84,10 @@ function ExpenseActions({ expense, onEdit, onDelete }) {
         variant="ghost"
         size="icon-sm"
         aria-label={`Edit ${expense.title}`}
-        onClick={() => onEdit(expense)}
+        onClick={(event) => {
+          event.stopPropagation();
+          onEdit(expense);
+        }}
       >
         <Pencil />
       </Button>
@@ -92,7 +96,10 @@ function ExpenseActions({ expense, onEdit, onDelete }) {
         size="icon-sm"
         className="text-destructive hover:bg-destructive/10 hover:text-destructive"
         aria-label={`Delete ${expense.title}`}
-        onClick={() => onDelete(expense)}
+        onClick={(event) => {
+          event.stopPropagation();
+          onDelete(expense);
+        }}
       >
         <Trash2 />
       </Button>
@@ -238,6 +245,7 @@ function Expenses() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   const [deletingExpense, setDeletingExpense] = useState(null);
+  const [viewingExpense, setViewingExpense] = useState(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -307,6 +315,8 @@ function Expenses() {
     setEditingExpense(expense);
     setFormOpen(true);
   };
+
+  const openExpenseDetails = (expense) => setViewingExpense(expense);
 
   const sortOptions = [
     { label: "Latest", value: "date-desc" },
@@ -454,7 +464,17 @@ function Expenses() {
                   {expenses.map((expense) => (
                     <tr
                       key={expense._id}
-                      className="transition-colors hover:bg-gray-50/80 dark:hover:bg-sidebar-accent"
+                      className="cursor-pointer transition-colors hover:bg-gray-50/80 dark:hover:bg-sidebar-accent"
+                      onClick={() => openExpenseDetails(expense)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          openExpenseDetails(expense);
+                        }
+                      }}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`View details for ${expense.title}`}
                     >
                       <td className="max-w-[220px] px-5 py-4">
                         <p
@@ -501,7 +521,17 @@ function Expenses() {
               {expenses.map((expense) => (
                 <article
                   key={expense._id}
-                  className="flex items-start justify-between gap-3 p-4"
+                  className="flex cursor-pointer items-start justify-between gap-3 p-4 transition-colors hover:bg-gray-50/80 dark:hover:bg-sidebar-accent"
+                  onClick={() => openExpenseDetails(expense)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openExpenseDetails(expense);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`View details for ${expense.title}`}
                 >
                   <div className="min-w-0">
                     <p className="truncate font-medium text-gray-900 dark:text-gray-100">
@@ -586,6 +616,11 @@ function Expenses() {
           if (expenses.length === 1 && page > 1)
             setPage((current) => current - 1);
         }}
+      />
+      <ExpenseDataDialog
+        open={Boolean(viewingExpense)}
+        onOpenChange={(open) => !open && setViewingExpense(null)}
+        expense={viewingExpense}
       />
     </div>
   );
