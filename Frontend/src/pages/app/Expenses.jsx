@@ -20,14 +20,17 @@ import { useCategories } from "../../hooks/useCategories.js";
 import { useExpenses } from "../../hooks/useExpenses.js";
 import ExpenseFormDialog from "../../components/expenses/ExpenseFormDialog.jsx";
 import DeleteExpenseDialog from "../../components/expenses/DeleteExpenseDialog.jsx";
+import { DatePicker } from "@/components/customUI/DatePicker.jsx";
+import SelectOptions from "@/components/customUI/SelectOptions.jsx";
 
 const PAGE_SIZE = 10;
-const paymentLabels = {
-  cash: "Cash",
-  upi: "UPI",
-  card: "Card",
-  netbanking: "Net banking",
-};
+const paymentLabels = [
+  { label: "All methods", value: "" },
+  { label: "Cash", value: "cash" },
+  { label: "UPI", value: "upi" },
+  { label: "Card", value: "card" },
+  { label: "Net banking", value: "netbanking" },
+];
 
 function formatDate(value) {
   const date = new Date(value);
@@ -104,6 +107,14 @@ function FilterFields({
   onClear,
   hasActiveFilters,
 }) {
+  const categoryOptions = [
+    { label: "All categories", value: "" },
+    ...categories.map((category) => ({
+      label: category.name,
+      value: category._id,
+    })),
+  ];
+
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <div className="space-y-1.5">
@@ -113,19 +124,12 @@ function FilterFields({
         >
           Category
         </label>
-        <select
+        <SelectOptions
           id="expense-category-filter"
+          items={categoryOptions}
           value={filters.category}
-          onChange={(event) => onChange("category", event.target.value)}
-          className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
-        >
-          <option value="">All categories</option>
-          {categories.map((category) => (
-            <option key={category._id} value={category._id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => onChange("category", value ?? "")}
+        />
       </div>
       <div className="space-y-1.5">
         <label
@@ -134,46 +138,36 @@ function FilterFields({
         >
           Payment method
         </label>
-        <select
+        <SelectOptions
           id="expense-payment-filter"
+          items={paymentLabels}
           value={filters.paymentMethod}
-          onChange={(event) => onChange("paymentMethod", event.target.value)}
-          className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
-        >
-          <option value="">All methods</option>
-          {Object.entries(paymentLabels).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => onChange("paymentMethod", value ?? "")}
+        />
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 flex flex-col">
         <label
           htmlFor="expense-start-date"
           className="text-xs font-medium text-muted-foreground"
         >
           From date
         </label>
-        <Input
-          id="expense-start-date"
-          type="date"
-          value={filters.startDate}
-          onChange={(event) => onChange("startDate", event.target.value)}
+
+        <DatePicker
+          date={filters.startDate}
+          onChange={(date) => onChange("startDate", date)}
         />
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 flex flex-col">
         <label
           htmlFor="expense-end-date"
           className="text-xs font-medium text-muted-foreground"
         >
           To date
         </label>
-        <Input
-          id="expense-end-date"
-          type="date"
-          value={filters.endDate}
-          onChange={(event) => onChange("endDate", event.target.value)}
+        <DatePicker
+          date={filters.endDate}
+          onChange={(date) => onChange("endDate", date)}
         />
       </div>
       <div className="space-y-1.5">
@@ -314,6 +308,13 @@ function Expenses() {
     setFormOpen(true);
   };
 
+  const sortOptions = [
+    { label: "Latest", value: "date-desc" },
+    { label: "Oldest", value: "date-asc" },
+    { label: "Highest", value: "amount-desc" },
+    { label: "Lowest", value: "amount-asc" },
+  ];
+
   return (
     <div className="mx-auto w-full px-4 py-6 sm:px-11 lg:px-11">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -343,17 +344,12 @@ function Expenses() {
             />
           </div>
           <div className="flex gap-2">
-            <select
+            <SelectOptions
+              id="expense-sorting"
+              items={sortOptions}
               value={`${sortBy}-${sortOrder}`}
-              onChange={(event) => changeSort(event.target.value)}
-              className="h-9 min-w-0 flex-1 rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-sidebar "
-              aria-label="Sort expenses"
-            >
-              <option value="date-desc">Newest first</option>
-              <option value="date-asc">Oldest first</option>
-              <option value="amount-desc">Highest amount</option>
-              <option value="amount-asc">Lowest amount</option>
-            </select>
+              onChange={(value) => changeSort(value)}
+            />
             <Button
               variant={hasFilters ? "secondary" : "outline"}
               onClick={() => setFiltersOpen((open) => !open)}
@@ -383,7 +379,7 @@ function Expenses() {
       </div>
 
       {isError && (
-        <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-gray-200 bg-white py-12 text-center dark:border-gray-800 dark:bg-gray-900">
+        <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-gray-200 bg-white py-12 text-center dark:border-sidebar-border dark:bg-sidebar">
           <p className="text-sm text-gray-900 dark:text-gray-100">
             Couldn't load your expenses.
           </p>
@@ -440,9 +436,6 @@ function Expenses() {
       {!isError && !isLoading && expenses.length > 0 && (
         <>
           <div className="relative mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-sidebar-border dark:bg-sidebar">
-            {isFetching && (
-              <div className="absolute inset-x-0 top-0 z-10 h-0.5 bg-primary animate-pulse" />
-            )}
             <div className="hidden md:block">
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-gray-200 bg-gray-50 text-xs text-muted-foreground dark:border-sidebar-border dark:bg-sidebar-accent">
