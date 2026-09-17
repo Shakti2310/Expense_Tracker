@@ -16,15 +16,11 @@ function SelectOptions({
   className = "w-full",
 }) {
   return (
-    <Select
-      items={items}
-      value={value}
-      onValueChange={onChange}
-    >
+    <Select items={items} value={value} onValueChange={onChange}>
       <SelectTrigger id={id} className={className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent alignItemWithTrigger={false}>
         <SelectGroup>
           {items.map((item) => (
             <SelectItem key={item.value} value={item.value}>
