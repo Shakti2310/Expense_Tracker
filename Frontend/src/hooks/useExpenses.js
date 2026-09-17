@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import {
   createExpense,
   deleteExpense,
+  getExpense,
   getExpenses,
   updateExpense,
 } from "../api/expense.api.js";
@@ -17,6 +18,14 @@ function useExpenses(params) {
     queryKey: [...EXPENSES_KEY, params],
     queryFn: () => getExpenses(params),
     placeholderData: (previousData) => previousData,
+  });
+}
+
+function useExpense(id, enabled = true) {
+  return useQuery({
+    queryKey: [...EXPENSES_KEY, "detail", id],
+    queryFn: () => getExpense(id),
+    enabled: Boolean(id) && enabled,
   });
 }
 
@@ -64,6 +73,7 @@ function useDeleteExpense() {
 
 export {
   useExpenses,
+  useExpense,
   useCreateExpense,
   useUpdateExpense,
   useDeleteExpense,
