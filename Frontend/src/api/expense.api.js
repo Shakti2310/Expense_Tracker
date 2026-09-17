@@ -5,6 +5,11 @@ const getExpenses = async (params) => {
   return response.data;
 };
 
+const getExpense = async (id) => {
+  const response = await api.get(`/expenses/${id}`);
+  return response.data;
+};
+
 const createExpense = async (payload) => {
   const response = await api.post("/expenses", payload);
   return response.data;
@@ -20,4 +25,4 @@ const deleteExpense = async (id) => {
   return response.data;
 };
 
-export { getExpenses, createExpense, updateExpense, deleteExpense };
+export { getExpenses, getExpense, createExpense, updateExpense, deleteExpense };
