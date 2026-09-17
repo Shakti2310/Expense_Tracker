@@ -82,7 +82,9 @@ const getAllExpenses = asyncHandler(async (req, res) => {
 
 const getExpense = asyncHandler(async (req, res) => {
   const _id = req.params.id;
-  const expense = await Expense.findOne({ _id, userId: req.user._id });
+  const expense = await Expense.findOne({ _id, userId: req.user._id }).populate(
+    "categoryId",
+  );
   if (!expense) throw new ApiError(404, "Expense not found");
 
   res.status(200).json(new ApiResponse(200, "Expense retrieved", expense));
