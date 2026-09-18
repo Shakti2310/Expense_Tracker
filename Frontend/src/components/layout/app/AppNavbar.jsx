@@ -1,11 +1,14 @@
 import { Input } from "@/components/ui/input";
 import useTheme from "@/hooks/useTheme";
 import { Bell, Moon, Search, Sun } from "lucide-react";
-import React from "react";
-import assets from "../../../assets/assets.js";
+import { NavLink } from "react-router";
+import { useCurrentUser } from "@/hooks/useAuthUser.js";
+import UserProfilePopover from "@/components/customUI/UserProfilePopover";
 
 function AppNavbar() {
   const { theme, toggleTheme } = useTheme();
+  const { data: user } = useCurrentUser();
+  const name = user?.fullname || user?.username || "Profile";
   return (
     <header className="w-full sticky top-0 z-40 px-10 h-18 border-b border-sidebar-border/60 bg-sidebar flex justify-between items-center ">
       <div className="w-[30%] dark:bg-primary/5 rounded-full flex items-center gap-2 bg-primary/5">
@@ -18,7 +21,7 @@ function AppNavbar() {
           className="w-[80%] overflow-hidden h-11 outline-none caret-transparent text-sm pr-1"
         />
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-3 items-center">
         <div
           className="p-3 rounded-full bg-primary/5 hover:bg-primary/10 cursor-pointer"
           onClick={toggleTheme}
@@ -32,11 +35,7 @@ function AppNavbar() {
         <div className="p-3 rounded-full bg-primary/5 hover:bg-primary/10 cursor-pointer">
           <Bell className="size-5" />
         </div>
-        <img
-          className="size-10 object-cover rounded-full dark:mix-blend-lighten dark:hover:mix-blend-difference hover:mix-blend-multiply mix-blend-darken cursor-pointer"
-          src={assets.dp}
-          alt="image"
-        />
+        <UserProfilePopover user={user} />
       </div>
     </header>
   );

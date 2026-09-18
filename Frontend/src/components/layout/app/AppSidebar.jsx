@@ -3,7 +3,6 @@ import {
   ArrowLeftRight,
   LayoutGrid,
   Wallet,
-  Search,
   Lightbulb,
   Settings,
   LogOut,
@@ -25,10 +24,10 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Logo from "../../customUI/Logo";
 import { NavLink } from "react-router";
+import { useLogoutUser } from "@/hooks/useAuthUser";
 
 // Swap `onClick` for `asChild` + your router's <Link> once routes are wired up.
 const NAV_ITEMS = [
@@ -40,6 +39,7 @@ const NAV_ITEMS = [
 
 function AppSidebar() {
   const { toggleSidebar } = useSidebar();
+  const logoutMutation = useLogoutUser();
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="gap-3 border-b border-sidebar-border/60 pb-3">
@@ -135,18 +135,23 @@ function AppSidebar() {
         <SidebarMenu className="gap-1">
           <SidebarMenuItem>
             <NavLink to="/settings">
-              <SidebarMenuButton
-                tooltip="Settings"
-                className="h-10 rounded-lg text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:[&_svg]:size-5 group-data-[collapsible=icon]:p-3!"
-              >
-                <Settings />
-                <span>Settings</span>
-              </SidebarMenuButton>
+              {({ isActive }) => (
+                <SidebarMenuButton
+                  tooltip="Settings"
+                  isActive={isActive}
+                  className="h-10 rounded-lg text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent data-[active=true]:bg-primary/10 data-[active=true]:text-primary group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:[&_svg]:size-5 group-data-[collapsible=icon]:p-3!"
+                >
+                  <Settings />
+                  <span>Settings</span>
+                </SidebarMenuButton>
+              )}
             </NavLink>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Log out"
+              onClick={() => logoutMutation.mutate()}
+              disabled={logoutMutation.isPending}
               className="text-destructive hover:text-destructive hover:bg-destructive/10 group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:[&_svg]:size-5 group-data-[collapsible=icon]:p-3.5!"
             >
               <LogOut />
