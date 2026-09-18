@@ -1,33 +1,17 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
 import OtpForm from "../../components/auth/OtpForm";
 import Loader from "../../components/customUI/Loader/";
-import { verifyUser, resendOtp } from "../../api/user.api";
+import { useResendOtp, useVerifyUser } from "@/hooks/useAuthUser";
 
 function EmailVerification() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const navigate = useNavigate();
   const inputRefs = useRef([]);
 
-  const { isPending, mutate } = useMutation({
-    mutationFn: verifyUser,
-    onSuccess: (data) => {
-      toast.success(data.message);
-      navigate("/dashboard");
-    },
-    onError: (error) => {
-      toast.error("Invalid OTP. Please try again.");
-    },
-  });
+  const { isPending, mutate } = useVerifyUser();
 
-  const {mutate: resendOtpMutation} = useMutation({
-    mutationFn: resendOtp,
-    onSuccess: (data) => {
-      toast.info(data.message);
-    },
-  });
+  const { mutate: resendOtpMutation } = useResendOtp();
 
   const handleInputChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;

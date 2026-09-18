@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "../../api/user.api.js";
 import Loader from "../../components/customUI/Loader.jsx";
 import SignUpForm from "../../components/auth/SignUpForm.jsx";
 import { registerSchema } from "../../validations/user.validation.js";
+import { useRegisterUser } from "@/hooks/useAuthUser.js";
 
 function SignUp() {
-  const navigate = useNavigate();
 
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
@@ -18,17 +15,7 @@ function SignUp() {
   const [agreed, setAgreed] = useState(false);
   const [defaultPicture, setDefaultPicture] = useState(null);
 
-  const { isPending, mutate } = useMutation({
-    mutationFn: registerUser,
-    onSuccess: (data) => {
-      toast.success(data.message);
-      navigate("/authentication/register/email-verification");
-    },
-    onError: (error) => {
-      if (error?.status == 409) toast.error("User already exists");
-      else toast.error("All details are required");
-    },
-  });
+  const { isPending, mutate } = useRegisterUser()
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();

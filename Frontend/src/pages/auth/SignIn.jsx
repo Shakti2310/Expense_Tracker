@@ -2,10 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import Loader from "../../components/customUI/Loader.jsx";
 import { loginSchema } from "../../validations/user.validation.js";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { loginUser } from "../../api/user.api.js";
 import SignInForm from "../../components/auth/SignInForm.jsx";
+import { useLoginUser } from "@/hooks/useAuthUser.js";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -14,21 +13,7 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const { isPending, mutate } = useMutation({
-    mutationFn: loginUser,
-    onSuccess: (data) => {
-      toast.success(data.message);
-      navigate("/dashboard");
-    },
-    onError: (error) => {
-      if (error?.status == 403) {
-        toast.error("Email not verified");
-        navigate("/authentication/register/email-verification");
-      } else if (error?.status == "401") toast.error("Incorrect password");
-      else if (error?.status == "404") toast.error("User not exists");
-      else toast.error("Username and password is required");
-    },
-  });
+  const { isPending, mutate } = useLoginUser();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
