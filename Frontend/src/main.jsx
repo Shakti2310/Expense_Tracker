@@ -10,6 +10,7 @@ import Dashboard from "./pages/app/Dashboard.jsx";
 import Expenses from "./pages/app/Expenses.jsx";
 import Categories from "./pages/app/Categories.jsx";
 import Budgets from "./pages/app/Budgets.jsx";
+import Settings from "./pages/app/Settings";
 
 import AuthLayout from "./layouts/AuthLayout.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
       {
         path: "budgets",
         Component: Budgets,
+      },
+      {
+        path: "settings",
+        Component: Settings,
       },
     ],
   },
