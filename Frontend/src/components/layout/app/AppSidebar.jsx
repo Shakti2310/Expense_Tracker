@@ -78,7 +78,7 @@ function AppSidebar() {
                 <NavLink to={`/${label.toLowerCase()}`} key={label}>
                   {({ isActive }) => (
                     <SidebarMenuItem
-                      className="relative flex justify-center "
+                      className="relative flex justify-center items-center"
                       key={label}
                     >
                       {isActive && (
@@ -93,7 +93,7 @@ function AppSidebar() {
                         <span>{label}</span>
                       </SidebarMenuButton>
                       {badge && (
-                        <SidebarMenuBadge className="bg-primary rounded-full px-1.5 dark:text-black text-white">
+                        <SidebarMenuBadge className="bg-primary rounded-full px-1.5 dark:text-black! text-white!">
                           {badge}
                         </SidebarMenuBadge>
                       )}
