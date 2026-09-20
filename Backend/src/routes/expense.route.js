@@ -8,7 +8,7 @@ import {
   deleteBulkExpenses,
   reassignCategory,
 } from "../controllers/expense.controller.js";
-import { verifyAccessToken } from "../middlewares/auth.middleware.js";
+import  verifyAccessToken from "../middlewares/auth.middleware.js";
 import {
   validateReqBody,
   validateReqQuery,
