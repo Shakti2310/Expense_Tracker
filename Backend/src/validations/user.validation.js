@@ -53,11 +53,7 @@ const updateUserSchema = z
       .optional(),
     fullname: z.string().trim().min(2).max(50).optional(),
     email: z.string().trim().toLowerCase().email().optional(),
-  })
-  .refine(
-    (data) => Object.keys(data).length > 0,
-    "At least one field must be provided for update",
-  );
+  });
 
 const changePasswordSchema = z.object({
   oldPassword: z.string().min(1, "Current password is required"),
