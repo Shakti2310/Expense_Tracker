@@ -35,31 +35,4 @@ const verifyAccessToken = asyncHandler(async (req, _, next) => {
   }
 });
 
-const verifyEmailToken = asyncHandler(async (req, _, next) => {
-  try {
-    const verificationToken =
-      req.cookies?.verificationToken ||
-      req.headers.authorization?.replace("Bearer ", "");
-
-    if (!verificationToken)
-      throw new ApiError(401, "Verification token not found");
-
-    const decodedToken = jwt.verify(
-      verificationToken,
-      process.env.VERIFICATION_TOKEN_SECRET,
-    );
-
-    const user = await User.findById(decodedToken?._id).select(
-      "-password -refreshToken",
-    );
-
-    if (!user) throw new ApiError(401, "Invalid Verification Token");
-
-    req.user = user;
-    next();
-  } catch (error) {
-    throw new ApiError(401, "Invalid or expired verification token");
-  }
-});
-
-export { verifyAccessToken, verifyEmailToken };
+export default verifyAccessToken;
