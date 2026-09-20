@@ -38,20 +38,26 @@ const loginSchema = z.object({
   password: passwordSchema,
 });
 
-const updateProfileSchema = z.object({
-  username: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must be under 20 characters")
-    .regex(
-      /^[a-z0-9_]+$/,
-      "Username can only contain lowercase letters, numbers, and underscores",
-    ),
-  fullname: z.string().trim().min(2).max(50).optional(),
-  email: z.string().trim().toLowerCase().email().optional(),
-});
+const updateUserSchema = z
+  .object({
+    username: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .min(3, "Username must be at least 3 characters")
+      .max(20, "Username must be under 20 characters")
+      .regex(
+        /^[a-z0-9_]+$/,
+        "Username can only contain lowercase letters, numbers, and underscores",
+      )
+      .optional(),
+    fullname: z.string().trim().min(2).max(50).optional(),
+    email: z.string().trim().toLowerCase().email().optional(),
+  })
+  .refine(
+    (data) => Object.keys(data).length > 0,
+    "At least one field must be provided for update",
+  );
 
 const changePasswordSchema = z.object({
   oldPassword: z.string().min(1, "Current password is required"),
@@ -65,7 +71,8 @@ const userOtpSchema = z.object({
 export {
   registerSchema,
   loginSchema,
-  updateProfileSchema,
+  updateUserSchema,
   changePasswordSchema,
   userOtpSchema,
+  passwordSchema,
 };
