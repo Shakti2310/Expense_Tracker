@@ -6,12 +6,12 @@ import User from "../models/user.model.js";
 import Otp from "../models/otp.model.js";
 
 import { generateAuthTokens } from "../services/authTokens.service.js";
-import { initiateEmailVerification } from "../services/verification.service.js";
 
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import { cookieOptions1d, cookieOptions7d } from "../constants.js";
 import { v2 as cloudinary } from "cloudinary";
+import sendNewOtp from "../services/otp.service.js";
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   res.json({ message: "This is a protected route", user: req.user });
@@ -32,7 +32,10 @@ const registerUser = asyncHandler(async (req, res) => {
     const existedUser = await User.findOne({ $or: [{ username }, { email }] });
 
     // Throwing error if user is existed already
-    if (existedUser) throw new ApiError(409, "User already existed");
+    if (existedUser && existedUser.email === email)
+      throw new ApiError(409, "Email is already registered");
+    if (existedUser && existedUser.username === username)
+      throw new ApiError(409, "User already exists with this username");
 
     // Uploading dp to Cloudinary
     const defaultPicture = await cloudinary.uploader.upload(dpLocalPath, {
@@ -51,16 +54,26 @@ const registerUser = asyncHandler(async (req, res) => {
       defaultPicture: defaultPicture.url,
     });
 
-    const verificationToken = await initiateEmailVerification(user);
+    const otp = await sendNewOtp(user);
+    if (!otp) throw new ApiError(500, "Otp sending failed");
 
-    if (!verificationToken)
-      throw new ApiError(500, "Verification token not generated");
+    const { accessToken, refreshToken } = await generateAuthTokens(user._id);
 
     // Sending the response and status code
     return res
       .status(201)
-      .cookie("verificationToken", verificationToken, cookieOptions1d)
-      .json(new ApiResponse(200, "User registered successfully", user));
+      .cookie("accessToken", accessToken, cookieOptions1d)
+      .cookie("refreshToken", refreshToken, cookieOptions7d)
+      .json(
+        new ApiResponse(200, "User registered successfully", {
+          user: user._id,
+          username: user.username,
+          fullname: user.fullname,
+          email: user.email,
+          role: user.role,
+          defaultPicture: user.defaultPicture,
+        }),
+      );
   } finally {
     if (dpLocalPath && fs.existsSync(dpLocalPath)) fs.unlinkSync(dpLocalPath);
   }
@@ -83,15 +96,12 @@ const loginUser = asyncHandler(async (req, res) => {
   const isPasswordValid = await user.verifyPassword(password);
 
   // Error if password is wrong
-  if (!isPasswordValid) throw new ApiError(401, "Wrong password");
+  if (!isPasswordValid) throw new ApiError(401, "Incorrect password");
 
   // Verification Check
   if (!user.isVerified) {
-    const verificationToken = await initiateEmailVerification(user);
-    return res
-      .status(403)
-      .cookie("verificationToken", verificationToken, cookieOptions1d)
-      .json(new ApiResponse(403, "Please verify your email address"));
+    const otp = await sendNewOtp(user);
+    if (!otp) throw new ApiError(500, "Otp sending failed");
   }
 
   // Tokens generated
@@ -101,7 +111,16 @@ const loginUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, cookieOptions1d) // sending cookies
     .cookie("refreshToken", refreshToken, cookieOptions7d)
-    .json(new ApiResponse(200, { user }, "User logged in successfully"));
+    .json(
+      new ApiResponse(200, "User logged in successfully", {
+        user: user._id,
+        username: user.username,
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role,
+        defaultPicture: user.defaultPicture,
+      }),
+    );
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
@@ -168,16 +187,59 @@ const verifyUser = asyncHandler(async (req, res) => {
 
   await Otp.deleteOne({ email });
 
-  const { accessToken, refreshToken } = await generateAuthTokens(
-    updatedUser._id,
-  );
+  return res.status(201).json(new ApiResponse(200, "Email verified"));
+});
 
-  return res
-    .status(201)
-    .clearCookie("verificationToken", cookieOptions1d)
-    .cookie("accessToken", accessToken, cookieOptions1d)
-    .cookie("refreshToken", refreshToken, cookieOptions7d)
-    .json(new ApiResponse(200, "Email verified"));
+const updateUser = asyncHandler(async (req, res) => {
+  const payload = { ...req?.body };
+
+  try {
+    if (req.file) {
+      const deleteOldDP = await cloudinary.uploader.destroy(
+        req.user.defaultPicture,
+      );
+      if (!deleteOldDP) throw new ApiError(500, "Cloudinary delete failed");
+
+      const defaultPicture = await cloudinary.uploader.upload(req?.file.path);
+      if (!defaultPicture) throw new ApiError(500, "Cloudinary upload failed");
+
+      payload.defaultPicture = defaultPicture.url;
+    }
+
+    if (payload.email) payload.isVerified = false;
+
+    const user = await User.findByIdAndUpdate(req.user._id, payload, {
+      returnDocument: "after",
+    }).select("-password -refreshToken");
+    if (!user) throw new ApiError(500, "Profile update failed");
+
+    if (payload.email) {
+      const otp = sendNewOtp(user);
+      if (!otp) throw new ApiError(500, "Otp sending failed");
+    }
+
+    res.status(201).json(new ApiResponse(201, "Profile updated", user));
+  } finally {
+    if (req?.file.path && fs.existsSync(req?.file.path))
+      fs.unlinkSync(req?.file.path);
+  }
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  const user = await User.findById(req.user._id);
+  if (!user) throw new ApiError(500, "User not found");
+
+  const isPasswordValid = await user.verifyPassword(oldPassword);
+  if (!isPasswordValid) throw new ApiError(401, "Incorrect password");
+
+  user.password = newPassword;
+  const updatedUser = await user.save();
+
+  if (!updatedUser) throw new ApiError(500, "Password does not changed");
+
+  res.status(201).json(new ApiResponse(201, "Password changed succussfully"));
 });
 
 export {
@@ -187,4 +249,6 @@ export {
   logoutUser,
   regenerateAccessToken,
   verifyUser,
+  updateUser,
+  changePassword,
 };
