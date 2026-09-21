@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 const otpSchema = new Schema(
   {
@@ -8,17 +7,35 @@ const otpSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
+
     email: {
       type: String,
-      required: [true, "email is required"],
+      required: true,
+      lowercase: true,
+      trim: true,
     },
+
+    type: {
+      type: String,
+      enum: ["verification", "reset-password"],
+      required: true,
+    },
+
     otpHash: {
       type: String,
-      required: [true, "Otp is required"],
+      required: true,
+    },
+
+    expiresAt: {
+      type: Date,
+      required: true,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
 otpSchema.pre("save", async function () {
@@ -30,17 +47,7 @@ otpSchema.methods.verifyOtp = async function (otp) {
   return await bcrypt.compare(otp, this.otpHash);
 };
 
-otpSchema.methods.generateVerificationToken = function () {
-  return jwt.sign(
-    { _id: this.userId, email: this.email },
-    process.env.VERIFICATION_TOKEN_SECRET,
-    {
-      expiresIn: process.env.VERIFICATION_TOKEN_EXPIRY,
-    },
-  );
-};
-
-otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 });
+otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Otp = mongoose.model("Otp", otpSchema);
 
