@@ -11,7 +11,7 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 import { cookieOptions1d, cookieOptions7d } from "../constants.js";
 import { v2 as cloudinary } from "cloudinary";
-import sendNewOtp from "../services/otp.service.js";
+import sendVerificationOtp from "../services/otp.service.js";
 import Category from "../models/category.model.js";
 import Expense from "../models/expense.model.js";
 import mongoose from "mongoose";
@@ -57,7 +57,7 @@ const registerUser = asyncHandler(async (req, res) => {
       defaultPicture: defaultPicture.url,
     });
 
-    const otp = await sendNewOtp(user);
+    const otp = await sendVerificationOtp(user);
     if (!otp) throw new ApiError(500, "Otp sending failed");
 
     const { accessToken, refreshToken } = await generateAuthTokens(user._id);
@@ -103,7 +103,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   // Verification Check
   if (!user.isVerified) {
-    const otp = await sendNewOtp(user);
+    const otp = await sendVerificationOtp(user);
     if (!otp) throw new ApiError(500, "Otp sending failed");
   }
 
@@ -225,7 +225,7 @@ const updateUser = asyncHandler(async (req, res) => {
     if (!user) throw new ApiError(500, "Profile update failed");
 
     if (payload.email) {
-      const otp = await sendNewOtp(user);
+      const otp = await sendVerificationOtp(user);
       if (!otp) throw new ApiError(500, "Otp sending failed");
     }
 

@@ -15,7 +15,7 @@ const generateOtpEmail = (user, otp) => {
   };
 };
 
-const sendNewOtp = async (user) => {
+const sendVerificationOtp = async (user) => {
   try {
     await Otp.deleteOne({ $or: [{ userId: user._id }, { email: user.email }] });
 
@@ -40,4 +40,4 @@ const sendNewOtp = async (user) => {
   }
 };
 
-export default sendNewOtp;
+export default sendVerificationOtp;
