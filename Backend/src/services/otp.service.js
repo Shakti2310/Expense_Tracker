@@ -17,19 +17,26 @@ const generateOtpEmail = (user, otp) => {
 
 const sendVerificationOtp = async (user) => {
   try {
-    await Otp.deleteOne({ $or: [{ userId: user._id }, { email: user.email }] });
+    await Otp.deleteOne({
+      $or: [
+        { userId: user._id, type: "verification" },
+        { email: user.email, type: "verification" },
+      ],
+    });
 
-    const otpCode = generateOtp();
+    const otpHash = generateOtp();
 
     const otp = await Otp.create({
       userId: user._id,
       email: user.email,
-      otpHash: otpCode,
+      type: "verification",
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+      otpHash,
     });
 
     if (!otp) throw new ApiError(500, "Otp not saved");
 
-    const otpEmail = generateOtpEmail(user, otpCode);
+    const otpEmail = generateOtpEmail(user, otpHash);
     if (!otpEmail) throw new ApiError(500, "error while structuring email");
 
     await sendEmail(user.email, otpEmail.subject, otpEmail.text, otpEmail.html);

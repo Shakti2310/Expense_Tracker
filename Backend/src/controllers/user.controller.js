@@ -171,7 +171,7 @@ const verifyUser = asyncHandler(async (req, res) => {
 
   const email = req.user?.email;
 
-  const otp = await Otp.findOne({ email }, "otpHash");
+  const otp = await Otp.findOne({ email, type: "verification" }, "otpHash");
 
   if (!otp) throw new ApiError(401, "Email not registered");
 
@@ -189,7 +189,7 @@ const verifyUser = asyncHandler(async (req, res) => {
         { returnDocument: "after" },
       );
 
-      await Otp.deleteOne({ email }, { session });
+      await Otp.deleteOne({ email, type: "verification" }, { session });
 
       if (!updatedUser)
         throw new ApiError(500, "Error updating user verification status");
