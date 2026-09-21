@@ -12,6 +12,9 @@ import jwt from "jsonwebtoken";
 import { cookieOptions1d, cookieOptions7d } from "../constants.js";
 import { v2 as cloudinary } from "cloudinary";
 import sendNewOtp from "../services/otp.service.js";
+import Category from "../models/category.model.js";
+import Expense from "../models/expense.model.js";
+import mongoose from "mongoose";
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   res.json({ message: "This is a protected route", user: req.user });
@@ -176,16 +179,24 @@ const verifyUser = asyncHandler(async (req, res) => {
 
   if (!isOtpValid) throw new ApiError(404, "Otp is invalid");
 
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user._id,
-    { $set: { isVerified: true } },
-    { returnDocument: "after" },
-  );
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $set: { isVerified: true } },
+        { session },
+        { returnDocument: "after" },
+      );
 
-  if (!updatedUser)
-    throw new ApiError(500, "Error updating user verification status");
+      await Otp.deleteOne({ email }, { session });
 
-  await Otp.deleteOne({ email });
+      if (!updatedUser)
+        throw new ApiError(500, "Error updating user verification status");
+    });
+  } finally {
+    await mongoose.endSession;
+  }
 
   return res.status(201).json(new ApiResponse(200, "Email verified"));
 });
@@ -214,7 +225,7 @@ const updateUser = asyncHandler(async (req, res) => {
     if (!user) throw new ApiError(500, "Profile update failed");
 
     if (payload.email) {
-      const otp = sendNewOtp(user);
+      const otp = await sendNewOtp(user);
       if (!otp) throw new ApiError(500, "Otp sending failed");
     }
 
@@ -242,6 +253,26 @@ const changePassword = asyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, "Password changed succussfully"));
 });
 
+const deleteUser = asyncHandler(async (req, res) => {
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      await Category.deleteMany({ userId: req.user._id }, { session });
+
+      await Expense.deleteMany({ userId: req.user._id }, { session });
+
+      const deletedUser = await User.findByIdAndDelete(req.user._id, {
+        session,
+      });
+      if (!deletedUser) throw new ApiError(500, "User deletion failed");
+    });
+
+    res.status(200).json(new ApiResponse(200, "User deleted successfully"));
+  } finally {
+    await session.endSession();
+  }
+});
+
 export {
   getCurrentUser,
   registerUser,
@@ -251,4 +282,5 @@ export {
   verifyUser,
   updateUser,
   changePassword,
+  deleteUser,
 };
