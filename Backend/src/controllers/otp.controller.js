@@ -1,7 +1,7 @@
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import sendVerificationOtp from "../services/otp.service.js";
+import {sendVerificationOtp} from "../services/otp.service.js";
 
 const resendOtp = asyncHandler(async (req, res) => {
   // Check if already verified

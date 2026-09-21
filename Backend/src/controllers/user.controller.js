@@ -11,7 +11,7 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 import { cookieOptions1d, cookieOptions7d } from "../constants.js";
 import { v2 as cloudinary } from "cloudinary";
-import sendVerificationOtp from "../services/otp.service.js";
+import {sendVerificationOtp} from "../services/otp.service.js";
 import Category from "../models/category.model.js";
 import Expense from "../models/expense.model.js";
 import mongoose from "mongoose";
