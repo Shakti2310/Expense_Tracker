@@ -38,25 +38,31 @@ const loginSchema = z.object({
   password: passwordSchema,
 });
 
-const updateUserSchema = z
-  .object({
-    username: z
-      .string()
-      .trim()
-      .toLowerCase()
-      .min(3, "Username must be at least 3 characters")
-      .max(20, "Username must be under 20 characters")
-      .regex(
-        /^[a-z0-9_]+$/,
-        "Username can only contain lowercase letters, numbers, and underscores",
-      )
-      .optional(),
-    fullname: z.string().trim().min(2).max(50).optional(),
-    email: z.string().trim().toLowerCase().email().optional(),
-  });
+const updateUserSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must be under 20 characters")
+    .regex(
+      /^[a-z0-9_]+$/,
+      "Username can only contain lowercase letters, numbers, and underscores",
+    )
+    .optional(),
+  fullname: z.string().trim().min(2).max(50).optional(),
+  email: z.string().trim().toLowerCase().email().optional(),
+});
 
 const changePasswordSchema = z.object({
   oldPassword: z.string().min(1, "Current password is required"),
+  newPassword: passwordSchema,
+});
+
+const forgotPasswordSchema = z.object({ email: string().email() });
+const resetPasswordSchema = z.object({
+  email: string().email(),
+  otp: userOtpSchema,
   newPassword: passwordSchema,
 });
 
@@ -69,6 +75,8 @@ export {
   loginSchema,
   updateUserSchema,
   changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
   userOtpSchema,
   passwordSchema,
 };
