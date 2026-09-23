@@ -59,15 +59,35 @@ const changePasswordSchema = z.object({
   newPassword: passwordSchema,
 });
 
-const forgotPasswordSchema = z.object({ email: string().email() });
-const resetPasswordSchema = z.object({
-  email: string().email(),
-  otp: userOtpSchema,
-  newPassword: passwordSchema,
-});
-
 const userOtpSchema = z.object({
   clientOtp: z.string().min(6, "Otp must be 6 characters long"),
+});
+
+const forgotPasswordSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must be under 20 characters")
+    .regex(
+      /^[a-z0-9_]+$/,
+      "Username can only contain lowercase letters, numbers, and underscores",
+    ),
+});
+const resetPasswordSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must be under 20 characters")
+    .regex(
+      /^[a-z0-9_]+$/,
+      "Username can only contain lowercase letters, numbers, and underscores",
+    ),
+  clientOtp: z.string().min(6, "Otp must be 6 characters long"),
+  newPassword: passwordSchema,
 });
 
 export {
