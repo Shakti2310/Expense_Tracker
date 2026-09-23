@@ -114,7 +114,7 @@ Expense Tracker Team
                 line-height: 1.6;
                 color: #52525b;
               ">
-                Hello ${user.name},
+                Hello ${user.username},
               </p>
 
               <p style="
@@ -233,6 +233,7 @@ Expense Tracker Team
 };
 
 const sendVerificationOtp = async (user) => {
+  console.log("step");
   try {
     await Otp.deleteOne({
       $or: [
@@ -241,6 +242,7 @@ const sendVerificationOtp = async (user) => {
       ],
     });
 
+    console.log("step");
     const otpHash = generateOtp();
 
     const otp = await Otp.create({
@@ -250,9 +252,9 @@ const sendVerificationOtp = async (user) => {
       expiresAt: new Date(Date.now() + 60 * 60 * 1000),
       otpHash,
     });
-
+    
     if (!otp) throw new ApiError(500, "Otp not saved");
-
+    console.log("step");
     const otpEmail = generateVerificationOtpEmail(user, otpHash);
     if (!otpEmail) throw new ApiError(500, "error while structuring email");
 
