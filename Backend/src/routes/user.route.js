@@ -8,6 +8,8 @@ import {
   verifyUser,
   updateUser,
   changePassword,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/user.controller.js";
 import { resendOtp } from "../controllers/otp.controller.js";
 import { uploadUserPicture } from "../middlewares/multer.middleware.js";
@@ -19,6 +21,8 @@ import {
   userOtpSchema,
   updateUserSchema,
   changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 } from "../validations/user.validation.js";
 
 const router = Router();
@@ -56,5 +60,13 @@ router
     validateReqBody(changePasswordSchema),
     changePassword,
   );
+
+router
+  .route("/forgot-password")
+  .post(validateReqBody(forgotPasswordSchema), forgotPassword);
+
+router
+  .route("/reset-password")
+  .patch(validateReqBody(resetPasswordSchema), resetPassword);
 
 export default router;

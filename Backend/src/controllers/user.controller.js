@@ -11,7 +11,10 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 import { cookieOptions1d, cookieOptions7d } from "../constants.js";
 import { v2 as cloudinary } from "cloudinary";
-import {sendVerificationOtp} from "../services/otp.service.js";
+import {
+  sendVerificationOtp,
+  sendResetPasswordOtp,
+} from "../services/otp.service.js";
 import Category from "../models/category.model.js";
 import Expense from "../models/expense.model.js";
 import mongoose from "mongoose";
@@ -173,7 +176,7 @@ const verifyUser = asyncHandler(async (req, res) => {
 
   const otp = await Otp.findOne({ email, type: "verification" }, "otpHash");
 
-  if (!otp) throw new ApiError(401, "Email not registered");
+  if (!otp) throw new ApiError(401, "Otp has expired");
 
   const isOtpValid = await otp.verifyOtp(clientOtp);
 
@@ -195,7 +198,7 @@ const verifyUser = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Error updating user verification status");
     });
   } finally {
-    await mongoose.endSession;
+    await session.endSession();
   }
 
   return res.status(201).json(new ApiResponse(200, "Email verified"));
@@ -248,9 +251,76 @@ const changePassword = asyncHandler(async (req, res) => {
   user.password = newPassword;
   const updatedUser = await user.save();
 
-  if (!updatedUser) throw new ApiError(500, "Password does not changed");
+  if (!updatedUser) throw new ApiError(500, "Password hasn't changed");
 
   res.status(201).json(new ApiResponse(201, "Password changed succussfully"));
+});
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { username } = req.body;
+
+  const user = await User.findOne({ username });
+
+  const otp = await sendResetPasswordOtp(user);
+  if (!otp) throw new ApiError(400, "email sending failed");
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "If user exists otp has sended to reset password", {
+        username: user.username,
+        email: user.email,
+      }),
+    );
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { username, clientOtp, newPassword } = req.body;
+
+  const user = await User.findOne({ username });
+  if (!user) throw new ApiError(404, "User not found");
+
+  const otp = await Otp.findOne({
+    userId: user._id,
+    email: user.email,
+    type: "reset-password",
+  });
+  if (!otp) throw new ApiError(400, "Otp has expired");
+
+  const isValidOtp = await otp.verifyOtp(clientOtp);
+  if (!isValidOtp) throw new ApiError(400, "Invalid otp");
+
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      user.password = newPassword;
+      const updatedUser = await user.save({ session });
+
+      if (!updatedUser) throw new ApiError(500, "Password hasn't changed");
+
+      await Otp.deleteOne(
+        {
+          userId: updatedUser._id,
+          email: updatedUser.email,
+          type: "reset-password",
+        },
+        { session },
+      );
+
+      await User.updateOne(
+        {
+          _id: updatedUser._id,
+          username: updatedUser.username,
+        },
+        { $unset: { refreshToken: "" } },
+        { session },
+      );
+    });
+  } finally {
+    await session.endSession();
+  }
+
+  res.status(200).json(new ApiResponse(200, "Password changed successfully"));
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
@@ -282,5 +352,7 @@ export {
   verifyUser,
   updateUser,
   changePassword,
+  forgotPassword,
+  resetPassword,
   deleteUser,
 };
