@@ -1,0 +1,47 @@
+services:
+  mongo:
+    image: mongo:8.0
+    volumes:
+      - mongoData:/data/db
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisData:/data
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./Backend/.env
+    volumes:
+      - ./Backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+      - redis
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  mongoData:
+  redisData:
