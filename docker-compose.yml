@@ -19,6 +19,7 @@ services:
       context: ./Backend
       dockerfile: Dockerfile
       target: development
+    image: ashaktirao/backend:latest
     ports:
       - "4000:4000"
     env_file:
@@ -34,6 +35,7 @@ services:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
+    image: ashaktirao/frontend:latest
     ports:
       - "5173:5173"
     volumes:
